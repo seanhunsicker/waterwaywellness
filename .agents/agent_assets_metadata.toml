@@ -1,0 +1,20 @@
+uploads = []
+outputs = []
+
+[[generated]]
+id = "PXaTB1XYbv9AeszT4RltY"
+uri = "file://artifacts/waterway-wellness/src/assets/images/hero-runners.png"
+type = "image"
+title = "Sunset riverfront run in Florida"
+
+[[generated]]
+id = "aqsZAjLcH9-fd3ilrn7p_"
+uri = "file://artifacts/waterway-wellness/src/assets/images/community-hangout.png"
+type = "image"
+title = "Community hangout post run"
+
+[[generated]]
+id = "V_FvjhnYeOlt2OJ5jdaaG"
+uri = "file://artifacts/waterway-wellness/src/assets/images/florida-vibes.png"
+type = "image"
+title = "Fort Lauderdale palm trees"

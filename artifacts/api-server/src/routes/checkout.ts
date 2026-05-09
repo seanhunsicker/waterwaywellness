@@ -5,8 +5,94 @@ import { getUncachableStripeClient } from "../stripeClient";
 import { db } from "@workspace/db";
 import { ordersTable } from "@workspace/db";
 import { eq } from "drizzle-orm";
+import { logger } from "../lib/logger";
 
 const router: IRouter = Router();
+
+async function submitOrderToPrintify(stripeSessionId: string): Promise<void> {
+  const stripe = await getUncachableStripeClient();
+
+  const session = await stripe.checkout.sessions.retrieve(stripeSessionId, {
+    expand: ["shipping_details", "customer_details"],
+  }) as Awaited<ReturnType<typeof stripe.checkout.sessions.retrieve>> & {
+    shipping_details?: {
+      address?: { country?: string | null; state?: string | null; line1?: string | null; line2?: string | null; city?: string | null; postal_code?: string | null };
+      name?: string | null;
+    } | null;
+  };
+
+  if (session.payment_status !== "paid") {
+    logger.info({ stripeSessionId }, "Session not yet paid — skipping Printify submission");
+    return;
+  }
+
+  const [order] = await db
+    .select()
+    .from(ordersTable)
+    .where(eq(ordersTable.stripeSessionId, stripeSessionId));
+
+  if (!order) {
+    logger.warn({ stripeSessionId }, "No order found for session");
+    return;
+  }
+
+  if (order.printifyOrderId) {
+    logger.info({ orderId: order.id, printifyOrderId: order.printifyOrderId }, "Order already submitted to Printify");
+    return;
+  }
+
+  const shipping = session.shipping_details;
+  const customerEmail = session.customer_details?.email ?? "";
+
+  if (!shipping?.address || !shipping?.name) {
+    logger.error({ stripeSessionId }, "No shipping address on session — cannot submit to Printify");
+    return;
+  }
+
+  const nameParts = shipping.name.trim().split(/\s+/);
+  const firstName = nameParts[0] ?? "";
+  const lastName = nameParts.length > 1 ? nameParts.slice(1).join(" ") : firstName;
+
+  const items = order.items as Array<{ product_id: string; variant_id: number; quantity: number }>;
+
+  logger.info({ orderId: order.id, items }, "Submitting order to Printify");
+
+  const printifyOrder = await printify.createOrder({
+    external_id: order.id,
+    label: `WW-${order.id.slice(0, 8).toUpperCase()}`,
+    line_items: items.map((item) => ({
+      product_id: item.product_id,
+      variant_id: item.variant_id,
+      quantity: item.quantity,
+    })),
+    shipping_method: 1,
+    send_shipping_notification: true,
+    address_to: {
+      first_name: firstName,
+      last_name: lastName,
+      email: customerEmail,
+      country: shipping.address.country ?? "US",
+      region: shipping.address.state ?? "",
+      address1: shipping.address.line1 ?? "",
+      address2: shipping.address.line2 ?? undefined,
+      city: shipping.address.city ?? "",
+      zip: shipping.address.postal_code ?? "",
+    },
+  });
+
+  await db
+    .update(ordersTable)
+    .set({
+      status: "submitted",
+      printifyOrderId: printifyOrder.id,
+      customerEmail,
+      shippingAddress: shipping.address,
+      updatedAt: new Date(),
+    })
+    .where(eq(ordersTable.id, order.id));
+
+  logger.info({ orderId: order.id, printifyOrderId: printifyOrder.id }, "Order successfully submitted to Printify");
+}
 
 router.post("/checkout/session", async (req, res): Promise<void> => {
   try {
@@ -62,7 +148,7 @@ router.post("/checkout/session", async (req, res): Promise<void> => {
           shipping_rate_data: {
             type: "fixed_amount",
             fixed_amount: { amount: 699, currency: "usd" },
-            display_name: "Standard Shipping",
+            display_name: "Standard Shipping (5–10 business days)",
             delivery_estimate: {
               minimum: { unit: "business_day", value: 5 },
               maximum: { unit: "business_day", value: 10 },
@@ -73,7 +159,7 @@ router.post("/checkout/session", async (req, res): Promise<void> => {
           shipping_rate_data: {
             type: "fixed_amount",
             fixed_amount: { amount: 1299, currency: "usd" },
-            display_name: "Express Shipping",
+            display_name: "Express Shipping (2–4 business days)",
             delivery_estimate: {
               minimum: { unit: "business_day", value: 2 },
               maximum: { unit: "business_day", value: 4 },
@@ -90,7 +176,7 @@ router.post("/checkout/session", async (req, res): Promise<void> => {
       id: orderId,
       stripeSessionId: session.id,
       status: "pending",
-      items: items,
+      items,
       totalAmount: String(session.amount_total ?? 0),
     });
 
@@ -101,18 +187,21 @@ router.post("/checkout/session", async (req, res): Promise<void> => {
   }
 });
 
-router.get("/checkout/session/:sessionId", async (req, res) => {
+router.get("/checkout/session/:sessionId", async (req, res): Promise<void> => {
   try {
+    const { sessionId } = req.params;
+
+    await submitOrderToPrintify(sessionId).catch((err) => {
+      req.log.error({ err }, "Printify order submission failed");
+    });
+
     const stripe = await getUncachableStripeClient();
-    const session = await stripe.checkout.sessions.retrieve(
-      req.params.sessionId,
-      { expand: ["line_items", "shipping_details"] }
-    );
+    const session = await stripe.checkout.sessions.retrieve(sessionId);
 
     const [order] = await db
       .select()
       .from(ordersTable)
-      .where(eq(ordersTable.stripeSessionId, req.params.sessionId));
+      .where(eq(ordersTable.stripeSessionId, sessionId));
 
     res.json({
       data: {
@@ -132,4 +221,5 @@ router.get("/checkout/session/:sessionId", async (req, res) => {
   }
 });
 
+export { submitOrderToPrintify };
 export default router;

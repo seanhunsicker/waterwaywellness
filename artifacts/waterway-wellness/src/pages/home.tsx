@@ -4,6 +4,7 @@ import { Nav } from "@/components/nav";
 import { Footer } from "@/components/footer";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { ExternalLink } from "lucide-react";
 
 // Assets
 import heroRunners from "@/assets/images/hero-runners.png";
@@ -12,8 +13,57 @@ import floridaVibes from "@/assets/images/florida-vibes.png";
 import runClubWordmark from "@assets/WaterwayWellness_RunClub_Wordmark_Seafoam_1778255396810.png";
 import badgeLogo from "@assets/tiny_version_1778255352779.png";
 import throwUpDubIvory from "@assets/ThrowUpTheDub_Horizontal_Ivory_1778255332909.png";
+import throwUpDubSeafoam from "@assets/ThrowUpTheDub_Horizontal_Seafoam_1778255326346.png";
 import eventFlyer from "@assets/Location2_SOCIAL_9x16_1778255341413.jpg";
 import wwOutline from "@assets/WaterwayWellness_WWOutline_Seafoam_1778255372780.png";
+import fullWordmark from "@assets/WaterwayWellness_FullWordmark_Seafoam_1778255383648.png";
+
+const MERCH = [
+  {
+    id: "throw-up-the-dub-hoodie",
+    name: "Throw Up The Dub Hoodie",
+    price: "$39.99",
+    tag: "Hoodie",
+    bg: "#0f1a18",
+    handle: "throw-up-the-dub-hoodie",
+    asset: throwUpDubIvory,
+    assetAlt: "Throw Up The Dub",
+    assetClass: "w-4/5 mx-auto mt-auto",
+  },
+  {
+    id: "throw-up-the-dub-t-shirt",
+    name: "Throw Up The Dub T-Shirt",
+    price: "$26.99",
+    tag: "T-Shirt",
+    bg: "#0f1a18",
+    handle: "throw-up-the-dub-t-shirt",
+    asset: throwUpDubSeafoam,
+    assetAlt: "Throw Up The Dub",
+    assetClass: "w-4/5 mx-auto mt-auto",
+  },
+  {
+    id: "ww-emblem-hoodie",
+    name: "WW Emblem Hoodie",
+    price: "$39.99",
+    tag: "Hoodie",
+    bg: "#0f1a18",
+    handle: "ww-emblem-hoodie",
+    asset: badgeLogo,
+    assetAlt: "Waterway Wellness Emblem",
+    assetClass: "w-3/4 mx-auto mt-auto",
+  },
+  {
+    id: "ww-emblem-t-shirt",
+    name: "WW Emblem T-Shirt",
+    price: "$26.99",
+    tag: "T-Shirt",
+    bg: "#f5f0e8",
+    handle: "ww-emblem-t-shirt",
+    asset: fullWordmark,
+    assetAlt: "Waterway Wellness Wordmark",
+    assetClass: "w-4/5 mx-auto mt-auto",
+  },
+];
 
 const fadeInUp = {
   hidden: { opacity: 0, y: 40 },
@@ -221,7 +271,82 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 5. NEWSLETTER / JOIN */}
+      {/* 5. MERCH SECTION */}
+      <section id="merch" className="py-32 px-6 md:px-12 lg:px-24 bg-background relative z-10">
+        <div className="max-w-7xl mx-auto">
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-100px" }}
+            variants={staggerContainer}
+            className="flex flex-col gap-16"
+          >
+            <motion.div variants={fadeInUp} className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+              <div>
+                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-bold tracking-wide uppercase mb-6">
+                  <span className="w-2 h-2 rounded-full bg-primary" />
+                  The Gear
+                </div>
+                <h2 className="text-5xl md:text-7xl font-bold text-foreground leading-tight">
+                  Rep The Dub.
+                </h2>
+              </div>
+              <a
+                href="https://waterwaywellness.org"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 text-primary font-bold text-lg hover:opacity-80 transition-opacity shrink-0"
+                data-testid="link-shop-all"
+              >
+                Shop All <ExternalLink className="w-5 h-5" />
+              </a>
+            </motion.div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+              {MERCH.map((item) => (
+                <motion.a
+                  key={item.id}
+                  href={`https://waterwaywellness.org/products/${item.handle}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  variants={fadeInUp}
+                  whileHover={{ y: -6 }}
+                  transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+                  className="group flex flex-col rounded-3xl overflow-hidden border border-white/5 bg-card cursor-pointer"
+                  data-testid={`card-merch-${item.id}`}
+                >
+                  <div
+                    className="relative flex flex-col items-center justify-end pt-10 pb-6 px-6 min-h-[260px]"
+                    style={{ backgroundColor: item.bg }}
+                  >
+                    <div className="absolute top-4 left-4">
+                      <span className="text-xs font-bold tracking-widest uppercase px-3 py-1 rounded-full bg-white/10 text-white/60">
+                        {item.tag}
+                      </span>
+                    </div>
+                    <img
+                      src={item.asset}
+                      alt={item.assetAlt}
+                      className={`${item.assetClass} h-auto object-contain group-hover:scale-105 transition-transform duration-500 drop-shadow-2xl`}
+                    />
+                  </div>
+                  <div className="flex items-center justify-between p-5">
+                    <div>
+                      <p className="font-bold text-foreground text-sm leading-tight">{item.name}</p>
+                      <p className="text-primary font-bold mt-1">{item.price}</p>
+                    </div>
+                    <div className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center group-hover:bg-primary group-hover:text-primary-foreground transition-colors duration-300">
+                      <ExternalLink className="w-4 h-4 text-primary group-hover:text-primary-foreground transition-colors duration-300" />
+                    </div>
+                  </div>
+                </motion.a>
+              ))}
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* 6. NEWSLETTER / JOIN */}
       <section className="py-32 px-6 bg-background">
         <div className="max-w-4xl mx-auto bg-card rounded-[3rem] p-8 md:p-16 text-center border border-white/5 relative overflow-hidden">
           <div className="absolute top-0 left-1/2 -translate-x-1/2 w-3/4 h-1/2 bg-primary/10 blur-[100px] -z-10" />

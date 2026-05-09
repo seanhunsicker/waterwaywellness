@@ -19,6 +19,7 @@ export function Nav() {
         <a href="#about" className="text-foreground/80 hover:text-primary transition-colors" data-testid="link-nav-about">The Vibe</a>
         <a href="#details" className="text-foreground/80 hover:text-primary transition-colors" data-testid="link-nav-details">When & Where</a>
         <a href="#movement" className="text-foreground/80 hover:text-primary transition-colors" data-testid="link-nav-movement">The Movement</a>
+        <a href="#merch" className="text-foreground/80 hover:text-primary transition-colors" data-testid="link-nav-merch">Merch</a>
       </div>
 
       <a 

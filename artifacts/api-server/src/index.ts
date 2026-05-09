@@ -15,18 +15,13 @@ async function initStripe() {
     logger.info("Stripe schema ready");
 
     const stripeSync = await getStripeSync();
-
-    const webhookBaseUrl = `https://${process.env.REPLIT_DOMAINS?.split(",")[0]}`;
-    await stripeSync.findOrCreateManagedWebhook(
-      `${webhookBaseUrl}/api/stripe/webhook`
-    );
-    logger.info("Stripe webhook configured");
+    logger.info("Stripe sync initialized");
 
     stripeSync.syncBackfill()
       .then(() => logger.info("Stripe backfill complete"))
-      .catch((err) => logger.error({ err }, "Stripe backfill error"));
+      .catch((err: unknown) => logger.warn({ err }, "Stripe backfill skipped"));
   } catch (err) {
-    logger.warn({ err }, "Stripe init failed — continuing without Stripe (connect integration to enable)");
+    logger.warn({ err }, "Stripe init failed — continuing without Stripe");
   }
 }
 

@@ -116,7 +116,7 @@ export const printify = {
   async listProducts(): Promise<PrintifyProduct[]> {
     const { shopId } = getCredentials();
     const resp = await printifyFetch<PrintifyProductsResponse>(
-      `/shops/${shopId}/products.json?limit=100`
+      `/shops/${shopId}/products.json?limit=50`
     );
     return resp.data.filter(p => p.visible);
   },

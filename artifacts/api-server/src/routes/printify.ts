@@ -4,10 +4,56 @@ import { logger } from "../lib/logger";
 
 const router: IRouter = Router();
 
+function proxyImageUrl(src: string): string {
+  return `/api/printify/image?url=${encodeURIComponent(src)}`;
+}
+
+function rewriteProductImages(
+  product: import("../lib/printify").PrintifyProduct
+): import("../lib/printify").PrintifyProduct {
+  return {
+    ...product,
+    images: product.images.map((img) => ({
+      ...img,
+      src: proxyImageUrl(img.src),
+    })),
+  };
+}
+
+router.get("/printify/image", async (req, res): Promise<void> => {
+  const { url } = req.query;
+  if (!url || typeof url !== "string") {
+    res.status(400).json({ error: "Missing url parameter" });
+    return;
+  }
+
+  try {
+    const upstream = await fetch(decodeURIComponent(url), {
+      signal: AbortSignal.timeout(10_000),
+    });
+
+    if (!upstream.ok) {
+      res.status(upstream.status).end();
+      return;
+    }
+
+    const contentType = upstream.headers.get("content-type") ?? "image/jpeg";
+    const buffer = await upstream.arrayBuffer();
+
+    res.set("Content-Type", contentType);
+    res.set("Cache-Control", "public, max-age=86400");
+    res.send(Buffer.from(buffer));
+  } catch (err) {
+    logger.warn({ err, url }, "Image proxy failed");
+    res.status(502).end();
+  }
+});
+
 router.get("/printify/products", async (req, res) => {
   try {
     const products = await printify.listProducts();
-    res.json({ data: products });
+    const rewritten = products.map((p) => rewriteProductImages(p));
+    res.json({ data: rewritten });
   } catch (err: any) {
     req.log.error({ err }, "Failed to list Printify products");
     res.status(500).json({ error: err.message ?? "Failed to fetch products" });
@@ -17,7 +63,8 @@ router.get("/printify/products", async (req, res) => {
 router.get("/printify/products/:productId", async (req, res): Promise<void> => {
   try {
     const product = await printify.getProduct(req.params.productId);
-    res.json({ data: product });
+    const rewritten = rewriteProductImages(product);
+    res.json({ data: rewritten });
   } catch (err: any) {
     req.log.error({ err }, "Failed to get Printify product");
     if (err.message?.includes("404")) {

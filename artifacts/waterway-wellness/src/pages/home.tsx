@@ -6,10 +6,24 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ExternalLink } from "lucide-react";
 
-// Assets
-import heroRunners from "@/assets/images/hero-runners.png";
-import communityHangout from "@/assets/images/community-hangout.png";
-import floridaVibes from "@/assets/images/florida-vibes.png";
+// Real community photos (served from /public/community/)
+const PHOTOS = {
+  hero: "/community/photo9.jpg",       // big group shot for hero
+  vibe: "/community/photo1.jpg",       // community hangout / Kodak moment
+  movement: "/community/photo3.jpg",   // energy shot for movement section
+  strip: [
+    "/community/photo0.jpg",
+    "/community/photo2.jpg",
+    "/community/photo6.jpg",
+    "/community/photo10.jpg",
+    "/community/photo11.jpg",
+    "/community/photo3.jpg",
+    "/community/photo1.jpg",
+    "/community/photo9.jpg",
+  ],
+};
+
+// Brand assets
 import runClubWordmark from "@assets/WaterwayWellness_RunClub_Wordmark_Seafoam_1778255396810.png";
 import badgeLogo from "@assets/tiny_version_1778255352779.png";
 import throwUpDubIvory from "@assets/ThrowUpTheDub_Horizontal_Ivory_1778255332909.png";
@@ -89,8 +103,8 @@ export default function Home() {
       
       {/* 1. HERO SECTION */}
       <section className="relative min-h-[100dvh] flex items-center justify-center pt-20 overflow-hidden">
-        <motion.div style={{ y: yHero }} className="absolute inset-0 z-0 opacity-40">
-          <img src={heroRunners} alt="Runners at sunset" className="w-full h-full object-cover" />
+        <motion.div style={{ y: yHero }} className="absolute inset-0 z-0 opacity-50">
+          <img src={PHOTOS.hero} alt="Waterway Wellness community" className="w-full h-full object-cover" />
           <div className="absolute inset-0 bg-gradient-to-b from-background/40 via-background/80 to-background" />
         </motion.div>
 
@@ -145,7 +159,7 @@ export default function Home() {
           >
             <div className="order-2 lg:order-1 relative">
               <motion.div variants={fadeInUp} className="relative z-10 rounded-3xl overflow-hidden aspect-[4/3] bg-card border border-white/5">
-                <img src={communityHangout} alt="Community hanging out" className="w-full h-full object-cover" />
+                <img src={PHOTOS.vibe} alt="Waterway Wellness community" className="w-full h-full object-cover" />
               </motion.div>
               <motion.div 
                 initial={{ rotate: -15, scale: 0.8, opacity: 0 }}
@@ -176,7 +190,30 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 3. WHEN & WHERE (FLYER SECTION) */}
+      {/* 3. PHOTO STRIP */}
+      <div className="w-full overflow-hidden py-4 bg-background select-none">
+        <motion.div
+          className="flex gap-4"
+          animate={{ x: ["0%", "-50%"] }}
+          transition={{ duration: 30, ease: "linear", repeat: Infinity }}
+          style={{ width: "max-content" }}
+        >
+          {[...PHOTOS.strip, ...PHOTOS.strip].map((src, i) => (
+            <div
+              key={i}
+              className="w-64 h-48 rounded-2xl overflow-hidden shrink-0 border border-white/5"
+            >
+              <img
+                src={src}
+                alt="Waterway Wellness community"
+                className="w-full h-full object-cover"
+              />
+            </div>
+          ))}
+        </motion.div>
+      </div>
+
+      {/* 4. WHEN & WHERE (FLYER SECTION) */}
       <section id="details" className="py-32 px-6 md:px-12 lg:px-24 bg-card relative overflow-hidden">
         <div className="absolute top-0 right-0 w-1/2 h-full opacity-10 pointer-events-none">
           <img src={wwOutline} alt="" className="w-full h-full object-cover object-right mix-blend-overlay" />
@@ -248,8 +285,8 @@ export default function Home() {
 
       {/* 4. THE MOVEMENT / THROW UP THE DUB */}
       <section id="movement" className="py-32 bg-primary relative flex items-center justify-center overflow-hidden">
-        <div className="absolute inset-0 opacity-20 mix-blend-multiply">
-          <img src={floridaVibes} alt="Florida Vibes" className="w-full h-full object-cover" />
+        <div className="absolute inset-0 opacity-30 mix-blend-multiply">
+          <img src={PHOTOS.movement} alt="Waterway Wellness community energy" className="w-full h-full object-cover" />
         </div>
         
         <div className="relative z-10 container mx-auto px-6 text-center">

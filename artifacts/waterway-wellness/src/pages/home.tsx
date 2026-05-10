@@ -1,5 +1,5 @@
-import { motion, useScroll, useTransform } from "framer-motion";
-import { useRef, useState } from "react";
+import { motion, useScroll, useTransform, useMotionValue, useSpring, AnimatePresence } from "framer-motion";
+import { useRef, useState, useCallback } from "react";
 import { Link } from "wouter";
 import { useQuery } from "@tanstack/react-query";
 import { Nav } from "@/components/nav";
@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { ArrowRight, ShoppingCart } from "lucide-react";
 import { CheckoutModal } from "@/components/checkout-modal";
 import { useCart } from "@/context/cart";
+import { PhotoLightbox } from "@/components/photo-lightbox";
 
 // Real community photos (served from /public/community/)
 const PHOTOS = {
@@ -89,6 +90,19 @@ export default function Home() {
   const yHero = useTransform(scrollYProgress, [0, 1], ["0%", "50%"]);
   const [checkoutItems, setCheckoutItems] = useState<Array<{ product_id: string; variant_id: number; quantity: number }> | null>(null);
   const { addItem } = useCart();
+  const [lightboxPhoto, setLightboxPhoto] = useState<string | null>(null);
+  const [dubParticles, setDubParticles] = useState<Array<{ id: number; x: number; emoji: string }>>([]);
+
+  const fireDubCelebration = useCallback(() => {
+    const emojis = ["🤙", "🤙", "🤙", "✊", "💚", "🏃", "🌊", "⚡"];
+    const particles = Array.from({ length: 16 }, (_, i) => ({
+      id: Date.now() + i,
+      x: Math.random() * 100,
+      emoji: emojis[Math.floor(Math.random() * emojis.length)],
+    }));
+    setDubParticles(particles);
+    setTimeout(() => setDubParticles([]), 1800);
+  }, []);
 
   const { data: productsData } = useQuery<{ data: PrintifyProduct[] }>({
     queryKey: ["printify-products"],
@@ -258,12 +272,13 @@ export default function Home() {
           {[...PHOTOS.strip, ...PHOTOS.strip].map((src, i) => (
             <div
               key={i}
-              className="w-64 h-48 rounded-2xl overflow-hidden shrink-0 border border-white/5"
+              onClick={() => setLightboxPhoto(src)}
+              className="w-64 h-48 rounded-2xl overflow-hidden shrink-0 border border-white/5 cursor-pointer group"
             >
               <img
                 src={src}
                 alt="Waterway Wellness community"
-                className="w-full h-full object-cover"
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
               />
             </div>
           ))}
@@ -370,11 +385,15 @@ export default function Home() {
             transition={{ duration: 0.8 }}
             className="flex flex-col items-center gap-8"
           >
-            <img 
+            <motion.img 
               src={throwUpDubIvory} 
               alt="Throw Up The Dub" 
-              className="w-full max-w-5xl mx-auto h-auto"
+              className="w-full max-w-5xl mx-auto h-auto cursor-pointer select-none"
               style={{ filter: "drop-shadow(0 4px 24px rgba(0,0,0,0.9))" }}
+              onClick={fireDubCelebration}
+              whileTap={{ scale: 0.96 }}
+              whileHover={{ scale: 1.02 }}
+              transition={{ type: "spring", stiffness: 400, damping: 25 }}
             />
             <p className="text-2xl md:text-4xl font-semibold tracking-tight text-white max-w-3xl mx-auto leading-tight" style={{ textShadow: "0 2px 16px rgba(0,0,0,0.9)" }}>
               The Dub is the movement.
@@ -528,6 +547,25 @@ export default function Home() {
           onClose={() => setCheckoutItems(null)}
         />
       )}
+
+      {/* Emoji rain — fires when Throw Up The Dub is tapped */}
+      <AnimatePresence>
+        {dubParticles.map((p) => (
+          <motion.span
+            key={p.id}
+            initial={{ opacity: 1, y: "90vh", x: `${p.x}vw`, scale: 0.5 }}
+            animate={{ opacity: 0, y: "10vh", scale: 1.4 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 1.6, ease: "easeOut" }}
+            className="fixed pointer-events-none z-[300] text-2xl md:text-3xl"
+            style={{ left: 0, top: 0 }}
+          >
+            {p.emoji}
+          </motion.span>
+        ))}
+      </AnimatePresence>
+
+      <PhotoLightbox src={lightboxPhoto} onClose={() => setLightboxPhoto(null)} />
     </div>
   );
 }

@@ -353,9 +353,9 @@ export default function Home() {
       {/* 4. THE MOVEMENT / THROW UP THE DUB */}
       <section id="movement" className="py-32 bg-black relative flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0">
-          <img src={PHOTOS.movement} alt="Waterway Wellness community energy" className="w-full h-full object-cover" style={{ filter: "brightness(0.45) saturate(0.8)" }} />
+          <img src={PHOTOS.movement} alt="Waterway Wellness community energy" className="w-full h-full object-cover" style={{ filter: "brightness(0.25) saturate(0.5)" }} />
         </div>
-        <div className="absolute inset-0 bg-black/30" />
+        <div className="absolute inset-0 bg-black/50" />
         
         <div className="relative z-10 container mx-auto px-6 text-center">
           <motion.div
@@ -368,15 +368,17 @@ export default function Home() {
             <img 
               src={throwUpDubIvory} 
               alt="Throw Up The Dub" 
-              className="w-full max-w-5xl mx-auto h-auto drop-shadow-md" 
+              className="w-full max-w-5xl mx-auto h-auto"
+              style={{ filter: "drop-shadow(0 4px 24px rgba(0,0,0,0.9))" }}
             />
-            <p className="text-2xl md:text-4xl font-semibold tracking-tight text-primary-foreground max-w-3xl mx-auto leading-tight">
+            <p className="text-2xl md:text-4xl font-semibold tracking-tight text-white max-w-3xl mx-auto leading-tight" style={{ textShadow: "0 2px 16px rgba(0,0,0,0.9)" }}>
               The Dub is the movement.
             </p>
             <img
               src={wRunClubSeafoam}
               alt="W Run Club"
-              className="w-24 md:w-32 h-auto opacity-80 drop-shadow-lg"
+              className="w-24 md:w-32 h-auto"
+              style={{ filter: "drop-shadow(0 2px 12px rgba(0,0,0,0.8))" }}
             />
           </motion.div>
         </div>

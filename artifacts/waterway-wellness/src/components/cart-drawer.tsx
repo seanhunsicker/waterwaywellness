@@ -1,14 +1,55 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Minus, Plus, ShoppingBag, Trash2 } from "lucide-react";
+import { X, Minus, Plus, ShoppingBag, Trash2, Tag, CheckCircle2, XCircle } from "lucide-react";
 import { useCart } from "@/context/cart";
 import { CheckoutModal } from "@/components/checkout-modal";
 
 export function CartDrawer() {
-  const { items, count, removeItem, updateQty, clearCart, isOpen, closeCart } = useCart();
+  const { items, count, removeItem, updateQty, clearCart, promoCode, setPromoCode, isOpen, closeCart } = useCart();
   const [checkingOut, setCheckingOut] = useState(false);
 
+  const [codeInput, setCodeInput] = useState("");
+  const [codeLoading, setCodeLoading] = useState(false);
+  const [codeError, setCodeError] = useState<string | null>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+
   const subtotal = items.reduce((sum, i) => sum + i.price * i.quantity, 0);
+
+  const discount = promoCode
+    ? promoCode.percentOff != null
+      ? Math.round(subtotal * (promoCode.percentOff / 100))
+      : (promoCode.amountOff ?? 0)
+    : 0;
+
+  const total = Math.max(0, subtotal - discount);
+
+  async function applyCode() {
+    const code = codeInput.trim().toUpperCase();
+    if (!code) return;
+    setCodeLoading(true);
+    setCodeError(null);
+    try {
+      const resp = await fetch(`/api/checkout/validate-coupon?code=${encodeURIComponent(code)}`);
+      const data = await resp.json();
+      if (!resp.ok || !data.valid) {
+        setCodeError(data.error ?? "Invalid or expired code");
+      } else {
+        setPromoCode({ id: data.id, code: data.code, percentOff: data.percentOff, amountOff: data.amountOff });
+        setCodeInput("");
+        setCodeError(null);
+      }
+    } catch {
+      setCodeError("Could not validate code. Try again.");
+    } finally {
+      setCodeLoading(false);
+    }
+  }
+
+  function removeCode() {
+    setPromoCode(null);
+    setCodeInput("");
+    setCodeError(null);
+  }
 
   function handleCheckout() {
     if (items.length === 0) return;
@@ -115,12 +156,74 @@ export function CartDrawer() {
               </div>
 
               {items.length > 0 && (
-                <div className="border-t border-white/10 p-6 space-y-4 shrink-0">
-                  <div className="flex items-center justify-between">
-                    <span className="text-foreground/60 text-sm">Subtotal</span>
-                    <span className="font-bold text-foreground">${(subtotal / 100).toFixed(2)}</span>
+                <div className="border-t border-white/10 p-5 space-y-4 shrink-0">
+                  {promoCode ? (
+                    <div className="flex items-center justify-between bg-primary/10 border border-primary/30 rounded-xl px-4 py-3">
+                      <div className="flex items-center gap-2">
+                        <CheckCircle2 className="w-4 h-4 text-primary shrink-0" />
+                        <div>
+                          <p className="text-primary font-bold text-sm">{promoCode.code}</p>
+                          <p className="text-primary/70 text-xs">
+                            {promoCode.percentOff != null
+                              ? `${promoCode.percentOff}% off`
+                              : `$${((promoCode.amountOff ?? 0) / 100).toFixed(2)} off`}
+                          </p>
+                        </div>
+                      </div>
+                      <button onClick={removeCode} className="text-foreground/40 hover:text-foreground/70 transition-colors">
+                        <X className="w-4 h-4" />
+                      </button>
+                    </div>
+                  ) : (
+                    <div>
+                      <div className="flex gap-2">
+                        <div className="relative flex-1">
+                          <Tag className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-foreground/40" />
+                          <input
+                            ref={inputRef}
+                            type="text"
+                            value={codeInput}
+                            onChange={(e) => { setCodeInput(e.target.value.toUpperCase()); setCodeError(null); }}
+                            onKeyDown={(e) => e.key === "Enter" && applyCode()}
+                            placeholder="Discount code"
+                            className="w-full bg-white/10 border border-white/20 rounded-xl pl-8 pr-3 py-2.5 text-sm text-foreground placeholder:text-foreground/30 focus:outline-none focus:border-primary/60 transition-colors"
+                          />
+                        </div>
+                        <button
+                          onClick={applyCode}
+                          disabled={!codeInput.trim() || codeLoading}
+                          className="px-4 py-2.5 bg-white/10 hover:bg-white/20 disabled:opacity-50 disabled:cursor-not-allowed text-foreground font-semibold text-sm rounded-xl transition-colors whitespace-nowrap"
+                        >
+                          {codeLoading ? "…" : "Apply"}
+                        </button>
+                      </div>
+                      {codeError && (
+                        <div className="flex items-center gap-1.5 mt-2">
+                          <XCircle className="w-3.5 h-3.5 text-red-400 shrink-0" />
+                          <p className="text-red-400 text-xs">{codeError}</p>
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  <div className="space-y-1.5">
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="text-foreground/60">Subtotal</span>
+                      <span className="text-foreground">${(subtotal / 100).toFixed(2)}</span>
+                    </div>
+                    {discount > 0 && (
+                      <div className="flex items-center justify-between text-sm">
+                        <span className="text-primary">Discount ({promoCode?.code})</span>
+                        <span className="text-primary font-bold">−${(discount / 100).toFixed(2)}</span>
+                      </div>
+                    )}
+                    <div className="flex items-center justify-between font-bold">
+                      <span className="text-foreground">Total</span>
+                      <span className="text-foreground">${(total / 100).toFixed(2)}</span>
+                    </div>
+                    <p className="text-xs text-foreground/40">+ shipping at checkout</p>
                   </div>
-                  <p className="text-xs text-foreground/40">Shipping calculated at checkout</p>
+
                   <button
                     onClick={handleCheckout}
                     className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-bold py-4 rounded-xl transition-all active:scale-95 text-sm"
@@ -143,6 +246,7 @@ export function CartDrawer() {
       {checkingOut && (
         <CheckoutModal
           items={items.map(i => ({ product_id: i.product_id, variant_id: i.variant_id, quantity: i.quantity }))}
+          promoCodeId={promoCode?.id}
           onClose={() => setCheckingOut(false)}
         />
       )}

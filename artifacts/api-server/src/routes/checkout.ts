@@ -104,10 +104,39 @@ router.get("/checkout/config", async (req, res): Promise<void> => {
   }
 });
 
+router.get("/checkout/validate-coupon", async (req, res): Promise<void> => {
+  const { code } = req.query;
+  if (!code || typeof code !== "string") {
+    res.status(400).json({ error: "Missing code" });
+    return;
+  }
+  try {
+    const stripe = await getUncachableStripeClient();
+    const promoCodes = await stripe.promotionCodes.list({ code, active: true, limit: 1 });
+    if (promoCodes.data.length === 0) {
+      res.json({ valid: false, error: "Invalid or expired code" });
+      return;
+    }
+    const promo = promoCodes.data[0];
+    const coupon = promo.coupon;
+    res.json({
+      valid: true,
+      id: promo.id,
+      code: promo.code,
+      percentOff: coupon.percent_off ?? null,
+      amountOff: coupon.amount_off ?? null,
+    });
+  } catch (err: any) {
+    req.log.error({ err }, "Failed to validate coupon");
+    res.status(500).json({ error: "Could not validate code" });
+  }
+});
+
 router.post("/checkout/embedded-session", async (req, res): Promise<void> => {
   try {
-    const { items } = req.body as {
+    const { items, promoCodeId } = req.body as {
       items: Array<{ product_id: string; variant_id: number; quantity: number }>;
+      promoCodeId?: string;
     };
 
     if (!items || items.length === 0) {
@@ -182,6 +211,9 @@ router.post("/checkout/embedded-session", async (req, res): Promise<void> => {
       ],
       return_url: `${baseUrl}/shop/success?session_id={CHECKOUT_SESSION_ID}`,
       metadata: { order_id: orderId },
+      ...(promoCodeId
+        ? { discounts: [{ promotion_code: promoCodeId }] }
+        : { allow_promotion_codes: true }),
     });
 
     await db.insert(ordersTable).values({

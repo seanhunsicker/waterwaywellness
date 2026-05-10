@@ -10,6 +10,13 @@ export interface CartItem {
   image: string;
 }
 
+export interface PromoCode {
+  id: string;
+  code: string;
+  percentOff: number | null;
+  amountOff: number | null;
+}
+
 interface CartContextValue {
   items: CartItem[];
   count: number;
@@ -17,6 +24,8 @@ interface CartContextValue {
   removeItem: (product_id: string, variant_id: number) => void;
   updateQty: (product_id: string, variant_id: number, qty: number) => void;
   clearCart: () => void;
+  promoCode: PromoCode | null;
+  setPromoCode: (code: PromoCode | null) => void;
   isOpen: boolean;
   openCart: () => void;
   closeCart: () => void;
@@ -44,6 +53,7 @@ function save(items: CartItem[]) {
 export function CartProvider({ children }: { children: ReactNode }) {
   const [items, setItems] = useState<CartItem[]>(load);
   const [isOpen, setIsOpen] = useState(false);
+  const [promoCode, setPromoCode] = useState<PromoCode | null>(null);
 
   useEffect(() => { save(items); }, [items]);
 
@@ -76,14 +86,14 @@ export function CartProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
-  const clearCart = useCallback(() => setItems([]), []);
+  const clearCart = useCallback(() => { setItems([]); setPromoCode(null); }, []);
   const openCart = useCallback(() => setIsOpen(true), []);
   const closeCart = useCallback(() => setIsOpen(false), []);
 
   const count = items.reduce((sum, i) => sum + i.quantity, 0);
 
   return (
-    <CartContext.Provider value={{ items, count, addItem, removeItem, updateQty, clearCart, isOpen, openCart, closeCart }}>
+    <CartContext.Provider value={{ items, count, addItem, removeItem, updateQty, clearCart, promoCode, setPromoCode, isOpen, openCart, closeCart }}>
       {children}
     </CartContext.Provider>
   );

@@ -5,6 +5,7 @@ import { X } from "lucide-react";
 
 interface CheckoutModalProps {
   items: Array<{ product_id: string; variant_id: number; quantity: number }>;
+  promoCodeId?: string;
   onClose: () => void;
 }
 
@@ -19,7 +20,7 @@ async function getStripe() {
   return stripePromise;
 }
 
-export function CheckoutModal({ items, onClose }: CheckoutModalProps) {
+export function CheckoutModal({ items, promoCodeId, onClose }: CheckoutModalProps) {
   const [stripeReady, setStripeReady] = useState<ReturnType<typeof loadStripe> | null>(null);
   const [clientSecret, setClientSecret] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -39,20 +40,20 @@ export function CheckoutModal({ items, onClose }: CheckoutModalProps) {
     const resp = await fetch("/api/checkout/embedded-session", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ items }),
+      body: JSON.stringify({ items, promoCodeId }),
     });
     const data = await resp.json();
     if (!resp.ok) throw new Error(data.error ?? "Checkout failed");
     setClientSecret(data.clientSecret);
     return data.clientSecret;
-  }, [items]);
+  }, [items, promoCodeId]);
 
   useEffect(() => {
     fetchClientSecret().catch((err) => setError(err.message));
   }, [fetchClientSecret]);
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end md:items-center justify-center">
+    <div className="fixed inset-0 z-[70] flex items-end md:items-center justify-center">
       <div
         className="absolute inset-0 bg-black/70 backdrop-blur-sm"
         onClick={onClose}

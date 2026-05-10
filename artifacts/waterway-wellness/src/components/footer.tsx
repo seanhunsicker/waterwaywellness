@@ -20,6 +20,9 @@ export function Footer() {
             <a href="https://instagram.com/waterway.wellness" target="_blank" rel="noopener noreferrer" className="text-2xl font-medium text-foreground hover:text-primary transition-colors" data-testid="link-footer-ig">
               @waterway.wellness
             </a>
+            <a href="https://www.sweatpals.com/c/waterway-wellness-run-club" target="_blank" rel="noopener noreferrer" className="text-lg text-muted-foreground hover:text-primary transition-colors">
+              Join us on Sweat Pals
+            </a>
             <a href="mailto:waterwaywellnessco@gmail.com" className="text-lg text-muted-foreground hover:text-primary transition-colors" data-testid="link-footer-email">
               waterwaywellnessco@gmail.com
             </a>

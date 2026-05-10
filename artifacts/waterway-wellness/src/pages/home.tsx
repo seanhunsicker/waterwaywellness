@@ -13,8 +13,8 @@ import { PhotoLightbox } from "@/components/photo-lightbox";
 
 // Real community photos (served from /public/community/)
 const PHOTOS = {
-  hero: "/community/photo6.jpg",       // big group shot — most people, skyline, everyone throwing W
-  vibe: "/community/photo1.jpg",       // kodak black guy throwing up the dub
+  hero: "/community/photo1.jpg",       // original hero — guy throwing up the dub
+  vibe: "/community/photo6.jpg",       // big group shot — most people, skyline, everyone throwing W
   vibeGrid: [
     "/community/photo0.jpg",   // collage top-right
     "/community/photo2.jpg",   // collage bottom-right
@@ -280,7 +280,7 @@ export default function Home() {
                   No agenda. No brand deals. No one's trying to sell you anything. Just people who keep showing up because the company is actually good.
                 </p>
                 <motion.div variants={fadeInUp} className="flex flex-wrap gap-2">
-                  {["Show Up", "Good People", "Fort Lauderdale", "Post-Run Hangs", "IYKYK"].map((v) => (
+                  {["Show Up", "Good People", "Fort Lauderdale", "Monday Nights", "Two-Mile Tuesdays"].map((v) => (
                     <span key={v} className="px-4 py-2 rounded-full bg-primary/15 border border-primary/40 text-primary text-sm font-bold tracking-wide uppercase">
                       {v}
                     </span>

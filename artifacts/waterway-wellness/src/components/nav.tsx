@@ -33,15 +33,15 @@ export function Nav() {
         initial={{ y: -100, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-        className="fixed top-0 left-0 right-0 z-50 px-5 py-3.5 flex items-center justify-between bg-background/90 backdrop-blur-md border-b border-white/5"
+        className="fixed top-0 left-0 right-0 z-50 px-5 py-3.5 grid grid-cols-3 items-center bg-background/90 backdrop-blur-md border-b border-white/5"
       >
-        {/* Logo */}
+        {/* Logo — left */}
         <Link href="/" className="flex items-center z-10" data-testid="link-home" onClick={() => setMobileOpen(false)}>
           <img src={wwOutline} alt="Waterway Wellness Logo" className="h-8 w-auto" />
         </Link>
 
-        {/* Desktop links */}
-        <div className="hidden md:flex items-center gap-8 text-sm font-medium tracking-wide">
+        {/* Desktop links — truly centered */}
+        <div className="hidden md:flex items-center justify-center gap-8 text-sm font-medium tracking-wide">
           {NAV_LINKS.map((l) =>
             l.isAnchor ? (
               <a key={l.label} href={l.href} className="text-foreground/80 hover:text-primary transition-colors">
@@ -55,8 +55,11 @@ export function Nav() {
           )}
         </div>
 
+        {/* Spacer on mobile so right side stays right */}
+        <div className="md:hidden" />
+
         {/* Right side */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 justify-end">
           <button
             onClick={openCart}
             className="relative w-10 h-10 flex items-center justify-center rounded-full hover:bg-white/10 transition-colors"

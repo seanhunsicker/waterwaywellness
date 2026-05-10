@@ -146,35 +146,34 @@ export default function Home() {
       <Nav />
       
       {/* 1. HERO SECTION */}
-      <section className="relative min-h-[100dvh] flex items-center justify-center pt-20 overflow-hidden">
-        <motion.div style={{ y: yHero }} className="absolute inset-0 z-0">
-          <RotatingHeroBackground />
-        </motion.div>
+      <section className="relative w-full pt-16 overflow-hidden">
+        {/* Banner image — full width, natural aspect ratio, no cropping */}
+        <RotatingHeroBackground />
 
-        <div className="relative z-10 container mx-auto px-6 flex flex-col items-center text-center">
+        {/* Tagline + scroll indicator sit below the image */}
+        <div className="relative z-10 flex flex-col items-center gap-6 pb-10 -mt-6 md:-mt-10">
           <motion.p
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.4 }}
-            className="text-xl md:text-2xl font-medium text-foreground/90 max-w-2xl text-balance mt-64 md:mt-72"
+            className="text-lg md:text-2xl font-medium text-foreground/80 max-w-xl text-center text-balance px-6"
           >
             We hate running so we started a run club.
           </motion.p>
-        </div>
 
-        {/* Scroll indicator */}
-        <motion.button
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 1.2, duration: 1 }}
-          onClick={() => document.getElementById("about")?.scrollIntoView({ behavior: "smooth" })}
-          className="absolute bottom-20 left-1/2 -translate-x-1/2 animate-bounce cursor-pointer"
-          aria-label="Scroll down"
-        >
-          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-primary/60 hover:text-primary transition-colors">
-            <path d="m6 9 6 6 6-6"/>
-          </svg>
-        </motion.button>
+          <motion.button
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 1, duration: 0.8 }}
+            onClick={() => document.getElementById("about")?.scrollIntoView({ behavior: "smooth" })}
+            className="animate-bounce cursor-pointer"
+            aria-label="Scroll down"
+          >
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-primary/60 hover:text-primary transition-colors">
+              <path d="m6 9 6 6 6-6"/>
+            </svg>
+          </motion.button>
+        </div>
       </section>
 
       {/* 2. THE VIBE / MISSION */}

@@ -4,12 +4,12 @@ const PRINTIFY_API_BASE = 'https://api.printify.com/v1';
 
 function getCredentials() {
   const token = process.env.PRINTIFY_API_TOKEN;
-  const shopId = process.env.PRINTIFY_SHOP_ID;
+  const shopId = '26420569';
 
-  if (!token || !shopId) {
+  if (!token) {
     throw new Error(
       'Printify credentials not configured. ' +
-      'Set PRINTIFY_API_TOKEN and PRINTIFY_SHOP_ID environment secrets.'
+      'Set PRINTIFY_API_TOKEN environment secret.'
     );
   }
   return { token, shopId };

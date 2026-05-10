@@ -13,8 +13,8 @@ import { PhotoLightbox } from "@/components/photo-lightbox";
 
 // Real community photos (served from /public/community/)
 const PHOTOS = {
-  hero: "/community/photo1.jpg",       // original hero — guy throwing up the dub
-  vibe: "/community/photo6.jpg",       // big group shot — most people, skyline, everyone throwing W
+  hero: "/community/photo9.jpg",       // big group shot — 2700 building, WW banner
+  vibe: "/community/photo1.jpg",       // guy throwing up the dub
   vibeGrid: [
     "/community/photo0.jpg",   // collage top-right
     "/community/photo2.jpg",   // collage bottom-right
@@ -22,7 +22,6 @@ const PHOTOS = {
   movement: "/community/photo10.jpg",  // different from hero
   strip: [
     "/community/photo12.jpg",  // running action — orange bandana
-    "/community/photo3.jpg",   // previously unused
     "/community/photo21.jpg",  // high-five tunnel at night
     "/community/photo9.jpg",   // previously unused
     "/community/photo14.jpg",  // running action — orange shades

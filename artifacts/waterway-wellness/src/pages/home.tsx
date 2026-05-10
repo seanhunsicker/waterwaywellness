@@ -343,7 +343,7 @@ export default function Home() {
                   <div className="rounded-2xl bg-background border border-white/5 p-5">
                     <p className="text-primary font-bold text-sm uppercase tracking-widest mb-1">Two-Mile Tuesdays</p>
                     <p className="text-foreground font-bold text-lg mb-1">Tarpon River Brewing</p>
-                    <p className="text-muted-foreground text-sm">6:30 PM · First 35 runners get a free beer 🍺</p>
+                    <p className="text-muted-foreground text-sm">6:30 PM · Free beer + runners menu 🍺</p>
                   </div>
                   <div className="rounded-2xl bg-background border border-white/5 p-5">
                     <p className="text-primary font-bold text-sm uppercase tracking-widest mb-1">Weekend Pop-ups</p>

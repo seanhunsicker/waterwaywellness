@@ -1,10 +1,11 @@
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useRef } from "react";
+import { Link } from "wouter";
 import { Nav } from "@/components/nav";
 import { Footer } from "@/components/footer";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { ExternalLink } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 
 // Real community photos (served from /public/community/)
 const PHOTOS = {
@@ -34,45 +35,41 @@ import fullWordmark from "@assets/WaterwayWellness_FullWordmark_Seafoam_17782553
 
 const MERCH = [
   {
-    id: "throw-up-the-dub-hoodie",
+    id: "698fa025bca977ae630b527b",
     name: "Throw Up The Dub Hoodie",
-    price: "$39.99",
+    price: "$32.99",
     tag: "Hoodie",
     bg: "#0f1a18",
-    handle: "throw-up-the-dub-hoodie",
     asset: throwUpDubIvory,
     assetAlt: "Throw Up The Dub",
     assetClass: "w-4/5 mx-auto mt-auto",
   },
   {
-    id: "throw-up-the-dub-t-shirt",
+    id: "6989163283b74d3ce6019200",
     name: "Throw Up The Dub T-Shirt",
-    price: "$26.99",
+    price: "$24.99",
     tag: "T-Shirt",
     bg: "#0f1a18",
-    handle: "throw-up-the-dub-t-shirt",
     asset: throwUpDubSeafoam,
     assetAlt: "Throw Up The Dub",
     assetClass: "w-4/5 mx-auto mt-auto",
   },
   {
-    id: "ww-emblem-hoodie",
+    id: "698f9d638406554f63047ba0",
     name: "WW Emblem Hoodie",
-    price: "$39.99",
+    price: "$32.99",
     tag: "Hoodie",
     bg: "#0f1a18",
-    handle: "ww-emblem-hoodie",
     asset: badgeLogo,
     assetAlt: "Waterway Wellness Emblem",
     assetClass: "w-3/4 mx-auto mt-auto",
   },
   {
-    id: "ww-emblem-t-shirt",
+    id: "69891f2649f8687bb30f6535",
     name: "WW Emblem T-Shirt",
-    price: "$26.99",
+    price: "$24.99",
     tag: "T-Shirt",
     bg: "#f5f0e8",
-    handle: "ww-emblem-t-shirt",
     asset: fullWordmark,
     assetAlt: "Waterway Wellness Wordmark",
     assetClass: "w-4/5 mx-auto mt-auto",
@@ -328,55 +325,55 @@ export default function Home() {
                   Rep The Dub.
                 </h2>
               </div>
-              <a
-                href="https://waterwaywellness.org"
-                target="_blank"
-                rel="noopener noreferrer"
+              <Link
+                href="/shop"
                 className="inline-flex items-center gap-2 text-primary font-bold text-lg hover:opacity-80 transition-opacity shrink-0"
                 data-testid="link-shop-all"
               >
-                Shop All <ExternalLink className="w-5 h-5" />
-              </a>
+                Shop All <ArrowRight className="w-5 h-5" />
+              </Link>
             </motion.div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
               {MERCH.map((item) => (
-                <motion.a
+                <motion.div
                   key={item.id}
-                  href={`https://waterwaywellness.org/products/${item.handle}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
                   variants={fadeInUp}
                   whileHover={{ y: -6 }}
                   transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-                  className="group flex flex-col rounded-3xl overflow-hidden border border-white/5 bg-card cursor-pointer"
+                  className="group"
                   data-testid={`card-merch-${item.id}`}
                 >
-                  <div
-                    className="relative flex flex-col items-center justify-end pt-10 pb-6 px-6 min-h-[260px]"
-                    style={{ backgroundColor: item.bg }}
+                  <Link
+                    href={`/shop/${item.id}`}
+                    className="flex flex-col rounded-3xl overflow-hidden border border-white/5 bg-card cursor-pointer"
                   >
-                    <div className="absolute top-4 left-4">
-                      <span className="text-xs font-bold tracking-widest uppercase px-3 py-1 rounded-full bg-white/10 text-white/60">
-                        {item.tag}
-                      </span>
+                    <div
+                      className="relative flex flex-col items-center justify-end pt-10 pb-6 px-6 min-h-[260px]"
+                      style={{ backgroundColor: item.bg }}
+                    >
+                      <div className="absolute top-4 left-4">
+                        <span className="text-xs font-bold tracking-widest uppercase px-3 py-1 rounded-full bg-white/10 text-white/60">
+                          {item.tag}
+                        </span>
+                      </div>
+                      <img
+                        src={item.asset}
+                        alt={item.assetAlt}
+                        className={`${item.assetClass} h-auto object-contain group-hover:scale-105 transition-transform duration-500 drop-shadow-2xl`}
+                      />
                     </div>
-                    <img
-                      src={item.asset}
-                      alt={item.assetAlt}
-                      className={`${item.assetClass} h-auto object-contain group-hover:scale-105 transition-transform duration-500 drop-shadow-2xl`}
-                    />
-                  </div>
-                  <div className="flex items-center justify-between p-5">
-                    <div>
-                      <p className="font-bold text-foreground text-sm leading-tight">{item.name}</p>
-                      <p className="text-primary font-bold mt-1">{item.price}</p>
+                    <div className="flex items-center justify-between p-5">
+                      <div>
+                        <p className="font-bold text-foreground text-sm leading-tight">{item.name}</p>
+                        <p className="text-primary font-bold mt-1">{item.price}</p>
+                      </div>
+                      <div className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center group-hover:bg-primary group-hover:text-primary-foreground transition-colors duration-300">
+                        <ArrowRight className="w-4 h-4 text-primary group-hover:text-primary-foreground transition-colors duration-300" />
+                      </div>
                     </div>
-                    <div className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center group-hover:bg-primary group-hover:text-primary-foreground transition-colors duration-300">
-                      <ExternalLink className="w-4 h-4 text-primary group-hover:text-primary-foreground transition-colors duration-300" />
-                    </div>
-                  </div>
-                </motion.a>
+                  </Link>
+                </motion.div>
               ))}
             </div>
           </motion.div>

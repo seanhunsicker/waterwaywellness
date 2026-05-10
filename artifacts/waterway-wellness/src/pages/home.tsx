@@ -191,7 +191,7 @@ export default function Home() {
             
             <div className="order-1 lg:order-2 flex flex-col gap-8">
               <motion.div variants={fadeInUp}>
-                <h2 className="text-4xl md:text-6xl font-bold text-foreground leading-tight mb-6" style={{ fontFamily: "'SquidBoy', sans-serif" }}>
+                <h2 className="text-4xl md:text-6xl font-bold text-foreground leading-tight mb-6">
                   More than miles. <br/>
                   <span className="text-primary">Mostly vibes.</span>
                 </h2>

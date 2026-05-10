@@ -4,18 +4,19 @@ export function RotatingHeroBackground() {
   return (
     <div className="absolute inset-0 z-0 overflow-hidden">
 
-      {/* Hero photo with Ken Burns zoom */}
+      {/* Hero photo — static, no Ken Burns */}
+      <img
+        src={HERO_PHOTO}
+        alt=""
+        className="absolute inset-0 w-full h-full object-cover"
+        style={{ filter: "brightness(0.88) saturate(1.15)" }}
+      />
+
+      {/* Teal color wash */}
       <div
-        className="absolute inset-0"
-        style={{ animation: "kbZoomIn 18000ms ease-out both infinite alternate" }}
-      >
-        <img
-          src={HERO_PHOTO}
-          alt=""
-          className="absolute inset-0 w-full h-full object-cover"
-          style={{ filter: "brightness(0.88) saturate(1.15)" }}
-        />
-      </div>
+        className="absolute inset-0 z-10 pointer-events-none"
+        style={{ background: "radial-gradient(ellipse 80% 60% at 50% 60%, rgba(82,183,157,0.12) 0%, transparent 70%)" }}
+      />
 
       {/* Radial vignette — subtle, just darkens far edges */}
       <div
@@ -32,7 +33,7 @@ export function RotatingHeroBackground() {
         style={{ height: "40%", background: "linear-gradient(to bottom, transparent, hsl(var(--background)) 95%)" }}
       />
 
-      {/* Top fade for nav legibility — lighter */}
+      {/* Top fade for nav legibility */}
       <div
         className="absolute inset-x-0 top-0 z-10 pointer-events-none"
         style={{ height: "140px", background: "linear-gradient(to bottom, rgba(0,0,0,0.3), transparent)" }}

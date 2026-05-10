@@ -4,6 +4,8 @@ import { Link } from "wouter";
 import { Nav } from "@/components/nav";
 import { CheckoutModal } from "@/components/checkout-modal";
 import { motion, AnimatePresence } from "framer-motion";
+import { ShoppingCart } from "lucide-react";
+import { useCart } from "@/context/cart";
 
 interface PrintifyVariant {
   id: number;
@@ -54,6 +56,7 @@ function ProductCard({ product }: { product: PrintifyProduct }) {
   const [selectedOptions, setSelectedOptions] = useState<Record<number, number>>({});
   const [isExpanded, setIsExpanded] = useState(false);
   const [checkoutItems, setCheckoutItems] = useState<Array<{ product_id: string; variant_id: number; quantity: number }> | null>(null);
+  const { addItem } = useCart();
 
   const enabledVariants = product.variants.filter((v) => v.is_enabled && v.is_available);
   const defaultVariant = enabledVariants[0];
@@ -78,6 +81,19 @@ function ProductCard({ product }: { product: PrintifyProduct }) {
   function handleBuy() {
     if (!activeVariant) return;
     setCheckoutItems([{ product_id: product.id, variant_id: activeVariant.id, quantity: 1 }]);
+  }
+
+  function handleAddToCart() {
+    if (!activeVariant) return;
+    const image = getDefaultImage(product, activeVariant.id);
+    addItem({
+      product_id: product.id,
+      variant_id: activeVariant.id,
+      title: product.title,
+      variantTitle: activeVariant.title,
+      price: activeVariant.price,
+      image,
+    });
   }
 
   return (
@@ -176,13 +192,23 @@ function ProductCard({ product }: { product: PrintifyProduct }) {
           </div>
         )}
 
-        <button
-          onClick={handleBuy}
-          disabled={!activeVariant}
-          className="mt-auto w-full bg-primary hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed text-primary-foreground font-bold py-3 rounded-xl transition-all active:scale-95"
-        >
-          Buy Now
-        </button>
+        <div className="mt-auto flex gap-2">
+          <button
+            onClick={handleAddToCart}
+            disabled={!activeVariant}
+            className="flex-1 flex items-center justify-center gap-1.5 border border-white/20 hover:border-primary/60 disabled:opacity-50 disabled:cursor-not-allowed text-foreground/70 hover:text-foreground font-semibold py-3 rounded-xl transition-all active:scale-95 text-sm"
+          >
+            <ShoppingCart className="w-4 h-4" />
+            Add to Cart
+          </button>
+          <button
+            onClick={handleBuy}
+            disabled={!activeVariant}
+            className="flex-1 bg-primary hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed text-primary-foreground font-bold py-3 rounded-xl transition-all active:scale-95 text-sm"
+          >
+            Buy Now
+          </button>
+        </div>
       </div>
 
       {checkoutItems && (

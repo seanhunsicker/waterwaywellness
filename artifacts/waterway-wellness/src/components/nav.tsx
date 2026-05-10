@@ -1,9 +1,13 @@
 import { Link } from "wouter";
 import { motion } from "framer-motion";
+import { ShoppingBag } from "lucide-react";
 import logoPath from "@assets/WaterwayWellness_FullWordmark_Seafoam_1778255383648.png";
 import wwOutline from "@assets/WaterwayWellness_WWOutline_Seafoam_1778255372780.png";
+import { useCart } from "@/context/cart";
 
 export function Nav() {
+  const { count, openCart } = useCart();
+
   return (
     <motion.nav 
       initial={{ y: -100, opacity: 0 }}
@@ -23,15 +27,30 @@ export function Nav() {
         <Link href="/shop" className="text-foreground/80 hover:text-primary transition-colors" data-testid="link-nav-shop">Shop</Link>
       </div>
 
-      <a 
-        href="https://instagram.com/waterway.wellness" 
-        target="_blank" 
-        rel="noopener noreferrer"
-        className="bg-primary text-primary-foreground px-5 py-2.5 rounded-full text-sm font-bold tracking-wide hover:bg-primary/90 transition-colors"
-        data-testid="link-nav-join"
-      >
-        Join Us
-      </a>
+      <div className="flex items-center gap-3">
+        <button
+          onClick={openCart}
+          className="relative w-10 h-10 flex items-center justify-center rounded-full hover:bg-white/10 transition-colors"
+          aria-label="Open cart"
+          data-testid="btn-cart"
+        >
+          <ShoppingBag className="w-5 h-5 text-foreground/80" />
+          {count > 0 && (
+            <span className="absolute -top-0.5 -right-0.5 bg-primary text-primary-foreground text-[10px] font-bold rounded-full min-w-[18px] h-[18px] flex items-center justify-center px-1">
+              {count > 99 ? "99+" : count}
+            </span>
+          )}
+        </button>
+        <a 
+          href="https://instagram.com/waterway.wellness" 
+          target="_blank" 
+          rel="noopener noreferrer"
+          className="bg-primary text-primary-foreground px-5 py-2.5 rounded-full text-sm font-bold tracking-wide hover:bg-primary/90 transition-colors"
+          data-testid="link-nav-join"
+        >
+          Join Us
+        </a>
+      </div>
     </motion.nav>
   );
 }

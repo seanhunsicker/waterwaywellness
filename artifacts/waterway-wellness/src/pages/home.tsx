@@ -6,8 +6,9 @@ import { Nav } from "@/components/nav";
 import { Footer } from "@/components/footer";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, ShoppingCart } from "lucide-react";
 import { CheckoutModal } from "@/components/checkout-modal";
+import { useCart } from "@/context/cart";
 
 // Real community photos (served from /public/community/)
 const PHOTOS = {
@@ -79,6 +80,7 @@ export default function Home() {
   const { scrollYProgress } = useScroll({ target: containerRef });
   const yHero = useTransform(scrollYProgress, [0, 1], ["0%", "50%"]);
   const [checkoutItems, setCheckoutItems] = useState<Array<{ product_id: string; variant_id: number; quantity: number }> | null>(null);
+  const { addItem } = useCart();
 
   const { data: productsData } = useQuery<{ data: PrintifyProduct[] }>({
     queryKey: ["printify-products"],
@@ -95,6 +97,20 @@ export default function Home() {
     const defaultVariant = item.variants.find((v) => v.is_enabled && v.is_available);
     if (!defaultVariant) return;
     setCheckoutItems([{ product_id: item.id, variant_id: defaultVariant.id, quantity: 1 }]);
+  }
+
+  function handleAddToCart(item: PrintifyProduct) {
+    const defaultVariant = item.variants.find((v) => v.is_enabled && v.is_available);
+    if (!defaultVariant) return;
+    const image = item.images.find((i) => i.is_default)?.src ?? item.images[0]?.src ?? "";
+    addItem({
+      product_id: item.id,
+      variant_id: defaultVariant.id,
+      title: item.title,
+      variantTitle: defaultVariant.title,
+      price: defaultVariant.price,
+      image,
+    });
   }
 
   return (
@@ -354,37 +370,44 @@ export default function Home() {
                       variants={fadeInUp}
                       whileHover={{ y: -6 }}
                       transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-                      className="group"
+                      className="group flex flex-col rounded-3xl overflow-hidden border border-white/5 bg-card"
                       data-testid={`card-merch-${item.id}`}
                     >
-                      <button
-                        onClick={() => handleBuyProduct(item)}
-                        className="flex flex-col w-full rounded-3xl overflow-hidden border border-white/5 bg-card cursor-pointer text-left"
-                      >
-                        <div className="relative aspect-square overflow-hidden bg-black/20 w-full">
-                          {getDefaultImage(item) && (
-                            <img
-                              src={getDefaultImage(item)}
-                              alt={item.title}
-                              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                            />
-                          )}
-                          <div className="absolute top-4 left-4">
-                            <span className="text-xs font-bold tracking-widest uppercase px-3 py-1 rounded-full bg-black/50 text-white/80 backdrop-blur-sm">
-                              {getTag(item)}
-                            </span>
-                          </div>
+                      <Link href={`/shop/${item.id}`} className="relative aspect-square overflow-hidden bg-black/20 block">
+                        {getDefaultImage(item) && (
+                          <img
+                            src={getDefaultImage(item)}
+                            alt={item.title}
+                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                          />
+                        )}
+                        <div className="absolute top-4 left-4">
+                          <span className="text-xs font-bold tracking-widest uppercase px-3 py-1 rounded-full bg-black/50 text-white/80 backdrop-blur-sm">
+                            {getTag(item)}
+                          </span>
                         </div>
-                        <div className="flex items-center justify-between p-5">
-                          <div>
-                            <p className="font-bold text-foreground text-sm leading-tight">{item.title}</p>
-                            <p className="text-primary font-bold mt-1">{getLowestPrice(item)}</p>
-                          </div>
-                          <div className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center group-hover:bg-primary group-hover:text-primary-foreground transition-colors duration-300">
-                            <ArrowRight className="w-4 h-4 text-primary group-hover:text-primary-foreground transition-colors duration-300" />
-                          </div>
+                      </Link>
+                      <div className="p-5 flex flex-col gap-3 flex-1">
+                        <div>
+                          <p className="font-bold text-foreground text-sm leading-tight">{item.title}</p>
+                          <p className="text-primary font-bold mt-1">{getLowestPrice(item)}</p>
                         </div>
-                      </button>
+                        <div className="flex gap-2 mt-auto">
+                          <button
+                            onClick={() => handleAddToCart(item)}
+                            className="flex-1 flex items-center justify-center gap-1.5 border border-white/20 hover:border-primary/60 text-foreground/70 hover:text-foreground font-semibold py-2.5 rounded-xl transition-all text-xs active:scale-95"
+                          >
+                            <ShoppingCart className="w-3.5 h-3.5" />
+                            Add to Cart
+                          </button>
+                          <button
+                            onClick={() => handleBuyProduct(item)}
+                            className="flex-1 bg-primary hover:bg-primary/90 text-primary-foreground font-bold py-2.5 rounded-xl transition-all text-xs active:scale-95"
+                          >
+                            Buy Now
+                          </button>
+                        </div>
+                      </div>
                     </motion.div>
                   ))}
             </div>

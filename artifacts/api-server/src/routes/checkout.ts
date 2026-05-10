@@ -152,7 +152,7 @@ router.post("/checkout/embedded-session", async (req, res): Promise<void> => {
       line_items: lineItems,
       mode: "payment",
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      ui_mode: "embedded" as any,
+      ui_mode: "embedded_page" as any,
       shipping_address_collection: {
         allowed_countries: ["US", "CA", "GB", "AU", "DE", "FR", "ES", "IT", "NL", "SE", "NO", "DK", "FI"],
       },

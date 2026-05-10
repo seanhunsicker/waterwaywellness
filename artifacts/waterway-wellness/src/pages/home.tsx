@@ -15,12 +15,19 @@ import { PhotoLightbox } from "@/components/photo-lightbox";
 const PHOTOS = {
   hero: "/community/photo6.jpg",       // big group shot — most people, skyline, everyone throwing W
   vibe: "/community/photo1.jpg",       // kodak black guy throwing up the dub
-  movement: "/community/photo6.jpg",
+  vibeGrid: [
+    "/community/photo0.jpg",   // collage top-right
+    "/community/photo2.jpg",   // collage bottom-right
+  ],
+  movement: "/community/photo10.jpg",  // different from hero
   strip: [
     "/community/photo12.jpg",  // running action — orange bandana
+    "/community/photo3.jpg",   // previously unused
     "/community/photo21.jpg",  // high-five tunnel at night
+    "/community/photo9.jpg",   // previously unused
     "/community/photo14.jpg",  // running action — orange shades
     "/community/photo23.jpg",  // DJ at the decks
+    "/community/photo11.jpg",  // previously unused
     "/community/photo13.jpg",  // yoga / sound bath purple
     "/community/photo15.jpg",  // throw up the dub shirt (black)
     "/community/photo16.jpg",  // Red Bull cans
@@ -221,15 +228,36 @@ export default function Home() {
             className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center"
           >
             <div className="order-2 lg:order-1 relative">
-              <motion.div variants={fadeInUp} className="relative z-10 rounded-3xl overflow-hidden aspect-[4/3] bg-card border border-white/5">
-                <img src={PHOTOS.vibe} alt="Waterway Wellness community" className="w-full h-full object-cover" />
+              {/* 3-photo collage */}
+              <motion.div variants={fadeInUp} className="relative z-10 grid grid-cols-2 gap-3 h-[420px] md:h-[500px]">
+                {/* Left — full height */}
+                <div
+                  className="rounded-3xl overflow-hidden cursor-pointer row-span-2"
+                  onClick={() => setLightboxPhoto(PHOTOS.vibe)}
+                >
+                  <img src={PHOTOS.vibe} alt="Waterway Wellness community" className="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
+                </div>
+                {/* Top right */}
+                <div
+                  className="rounded-3xl overflow-hidden cursor-pointer"
+                  onClick={() => setLightboxPhoto(PHOTOS.vibeGrid[0])}
+                >
+                  <img src={PHOTOS.vibeGrid[0]} alt="Waterway Wellness community" className="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
+                </div>
+                {/* Bottom right */}
+                <div
+                  className="rounded-3xl overflow-hidden cursor-pointer"
+                  onClick={() => setLightboxPhoto(PHOTOS.vibeGrid[1])}
+                >
+                  <img src={PHOTOS.vibeGrid[1]} alt="Waterway Wellness community" className="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
+                </div>
               </motion.div>
               <motion.div 
                 initial={{ rotate: -15, scale: 0.8, opacity: 0 }}
                 whileInView={{ rotate: -5, scale: 1, opacity: 1 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.8, delay: 0.4 }}
-                className="absolute -bottom-6 -left-4 md:-bottom-8 md:-left-8 w-24 md:w-48 z-20 drop-shadow-2xl"
+                className="absolute -bottom-6 -left-4 md:-bottom-8 md:-left-8 w-24 md:w-40 z-20 drop-shadow-2xl"
               >
                 <img src={emblemSeafoam} alt="Waterway Wellness Emblem" className="w-full h-auto" />
               </motion.div>
@@ -377,9 +405,9 @@ export default function Home() {
       {/* 4. THE MOVEMENT / THROW UP THE DUB */}
       <section id="movement" className="py-16 md:py-32 bg-black relative flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0">
-          <img src={PHOTOS.movement} alt="Waterway Wellness community energy" className="w-full h-full object-cover" style={{ filter: "brightness(0.5) saturate(1.1)" }} />
+          <img src={PHOTOS.movement} alt="Waterway Wellness community energy" className="w-full h-full object-cover" style={{ filter: "brightness(0.6) saturate(1.3) contrast(1.05)" }} />
         </div>
-        <div className="absolute inset-0 bg-black/40" />
+        <div className="absolute inset-0 bg-black/30" />
         
         <div className="relative z-10 container mx-auto px-6 text-center">
           <motion.div

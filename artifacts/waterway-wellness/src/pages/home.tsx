@@ -236,10 +236,10 @@ export default function Home() {
                   <span className="text-primary">the excuse.</span>
                 </h2>
                 <p className="text-lg text-foreground/75 leading-relaxed mb-6">
-                  We started this because we were tired of not knowing anyone in our own city. Now a few hundred people show up every week — some run fast, some run slow, some just walk. Doesn't matter.
+                  Waterway Wellness was created to give like-minded people a place to grow together. Most of us truly do not like running — but it's our vessel to meet genuine people.
                 </p>
                 <p className="text-lg text-foreground/75 leading-relaxed mb-10">
-                  No agenda. No brand deals. No one's trying to sell you anything. Just people who keep showing up because the company is actually good.
+                  The events are never about the runs. They're about coming together every week, having a great time, and bettering ourselves.
                 </p>
                 <motion.div variants={fadeInUp} className="flex flex-wrap gap-2">
                   {["Show Up", "Good People", "Fort Lauderdale", "Monday Nights", "Two-Mile Tuesdays"].map((v) => (

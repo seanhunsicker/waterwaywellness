@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { Link } from "wouter";
 import { Nav } from "@/components/nav";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -104,7 +105,7 @@ function ProductCard({ product }: { product: PrintifyProduct }) {
       transition={{ duration: 0.5 }}
       className="bg-white/5 border border-white/10 rounded-2xl overflow-hidden flex flex-col group"
     >
-      <div className="relative aspect-square overflow-hidden bg-black/20">
+      <Link href={`/shop/${product.id}`} className="block relative aspect-square overflow-hidden bg-black/20">
         {currentImage && (
           <img
             src={currentImage}
@@ -112,11 +113,18 @@ function ProductCard({ product }: { product: PrintifyProduct }) {
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
           />
         )}
-      </div>
+        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300 flex items-center justify-center">
+          <span className="text-white font-bold text-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-black/60 px-4 py-2 rounded-full">
+            View Product
+          </span>
+        </div>
+      </Link>
 
       <div className="p-5 flex flex-col gap-4 flex-1">
         <div className="flex items-start justify-between gap-3">
-          <h3 className="font-bold text-lg leading-tight text-foreground">{product.title}</h3>
+          <Link href={`/shop/${product.id}`} className="font-bold text-lg leading-tight text-foreground hover:text-primary transition-colors">
+            {product.title}
+          </Link>
           <span className="text-primary font-bold text-lg shrink-0">{price}</span>
         </div>
 

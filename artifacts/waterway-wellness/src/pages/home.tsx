@@ -28,7 +28,6 @@ const PHOTOS = {
     "/community/photo19.jpg",  // Monday crew gathering pre-run
     "/community/photo20.jpg",  // Imprint crew at table
     "/community/photo22.jpg",  // Imprint table wider shot
-    "/community/photo1.jpg",   // kodak W guy
   ],
 };
 
@@ -151,22 +150,40 @@ export default function Home() {
             <p className="text-2xl md:text-3xl font-medium text-foreground max-w-2xl text-balance">
               We hate running so we started a run club.
             </p>
-            <div className="flex items-center gap-4 text-muted-foreground font-medium uppercase tracking-widest text-sm">
-              <span>Fort Lauderdale</span>
-              <span className="w-1.5 h-1.5 rounded-full bg-primary" />
-              <span>Est. 2025</span>
-            </div>
           </motion.div>
         </div>
 
+        {/* Bottom editorial bar — inspired by brand header designs */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.8, duration: 1 }}
+          className="absolute bottom-0 inset-x-0 z-20 px-6 md:px-10 py-5 flex items-end justify-between gap-6"
+        >
+          {/* Three brand marks */}
+          <div className="hidden md:flex items-center gap-4 shrink-0">
+            <img src={emblemSeafoam} alt="" className="h-8 w-auto opacity-70" />
+            <img src={wRunClubSeafoam} alt="" className="h-6 w-auto opacity-70" />
+            <img src={wwOutline} alt="" className="h-7 w-auto opacity-70" />
+          </div>
+
+          {/* Editorial scattered text — mimics brand header typography */}
+          <div className="flex flex-wrap items-center gap-x-5 gap-y-1 text-[10px] md:text-xs font-bold uppercase tracking-[0.2em] text-foreground/40">
+            {["Throw Up The Dub®", "Meaningful Social Connections", "Fort Lauderdale, Florida", "Est. 2025", "The Dub Movement"].map((t) => (
+              <span key={t}>{t}</span>
+            ))}
+          </div>
+        </motion.div>
+
+        {/* Scroll indicator */}
         <motion.div 
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 1, duration: 1 }}
-          className="absolute bottom-12 left-1/2 -translate-x-1/2 animate-bounce"
+          transition={{ delay: 1.2, duration: 1 }}
+          className="absolute bottom-16 left-1/2 -translate-x-1/2 animate-bounce hidden md:block"
         >
-          <div className="w-8 h-12 rounded-full border-2 border-primary/50 flex items-start justify-center p-2">
-            <div className="w-1 h-3 bg-primary rounded-full" />
+          <div className="w-6 h-10 rounded-full border-2 border-primary/40 flex items-start justify-center p-1.5">
+            <div className="w-1 h-2 bg-primary/60 rounded-full" />
           </div>
         </motion.div>
       </section>

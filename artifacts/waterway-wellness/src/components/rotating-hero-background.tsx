@@ -12,18 +12,12 @@ export function RotatingHeroBackground() {
         style={{ filter: "brightness(0.88) saturate(1.15)" }}
       />
 
-      {/* Teal color wash */}
-      <div
-        className="absolute inset-0 z-10 pointer-events-none"
-        style={{ background: "radial-gradient(ellipse 80% 60% at 50% 60%, rgba(82,183,157,0.12) 0%, transparent 70%)" }}
-      />
-
-      {/* Radial vignette — subtle, just darkens far edges */}
+      {/* Teal edge vignette — bleeds in from all sides */}
       <div
         className="absolute inset-0 z-10 pointer-events-none"
         style={{
           background:
-            "radial-gradient(ellipse 95% 85% at 50% 40%, transparent 35%, rgba(0,0,0,0.35) 100%)",
+            "radial-gradient(ellipse 75% 70% at 50% 45%, transparent 40%, rgba(52,153,128,0.55) 100%)",
         }}
       />
 

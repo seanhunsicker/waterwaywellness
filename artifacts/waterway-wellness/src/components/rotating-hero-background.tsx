@@ -1,4 +1,4 @@
-const HERO_PHOTO = "/community/photo1.jpg";
+const HERO_PHOTO = "/community/photo6.jpg";
 
 export function RotatingHeroBackground() {
   return (

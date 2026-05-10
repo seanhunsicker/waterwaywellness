@@ -152,51 +152,15 @@ export default function Home() {
         </motion.div>
 
         <div className="relative z-10 container mx-auto px-6 flex flex-col items-center text-center">
-          <motion.img 
-            initial={{ scale: 0.9, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
-            src={runClubWordmark} 
-            alt="Waterway Wellness Run Club" 
-            className="w-full max-w-4xl h-auto mb-8 drop-shadow-2xl" 
-          />
-          
-          <motion.div
+          <motion.p
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.4 }}
-            className="flex flex-col items-center gap-6"
+            className="text-xl md:text-2xl font-medium text-foreground/90 max-w-2xl text-balance mt-64 md:mt-72"
           >
-            <p className="text-2xl md:text-3xl font-medium text-foreground max-w-2xl text-balance">
-              We hate running so we started a run club.
-            </p>
-          </motion.div>
+            We hate running so we started a run club.
+          </motion.p>
         </div>
-
-        {/* Bottom editorial bar — inspired by brand header designs */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.8, duration: 1 }}
-          className="absolute bottom-0 inset-x-0 z-20 px-5 md:px-10 py-4 md:py-5 flex items-center justify-between gap-4"
-        >
-          {/* Three brand marks — visible on all sizes */}
-          <div className="flex items-center gap-3 shrink-0">
-            <img src={emblemSeafoam} alt="" className="h-6 md:h-8 w-auto opacity-70" />
-            <img src={wRunClubSeafoam} alt="" className="h-5 md:h-6 w-auto opacity-70" />
-            <img src={wwOutline} alt="" className="h-5 md:h-7 w-auto opacity-70" />
-          </div>
-
-          {/* Editorial text — single truncated line on mobile, scattered on desktop */}
-          <div className="hidden md:flex items-center gap-x-5 text-xs font-bold uppercase tracking-[0.2em] text-foreground/40">
-            {["Throw Up The Dub®", "Meaningful Social Connections", "Fort Lauderdale, Florida", "Est. 2025", "The Dub Movement"].map((t) => (
-              <span key={t}>{t}</span>
-            ))}
-          </div>
-          <p className="md:hidden text-[9px] font-bold uppercase tracking-[0.15em] text-foreground/40 text-right leading-tight">
-            Fort Lauderdale, FL · Est. 2025
-          </p>
-        </motion.div>
 
         {/* Scroll indicator */}
         <motion.button

@@ -13,17 +13,15 @@ import { useCart } from "@/context/cart";
 // Real community photos (served from /public/community/)
 const PHOTOS = {
   hero: "/community/photo9.jpg",       // big group shot for hero
-  vibe: "/community/photo1.jpg",       // community hangout / Kodak moment
-  movement: "/community/photo3.jpg",   // energy shot for movement section
+  vibe: "/community/photo1.jpg",       // guy throwing up W — community Kodak moment
+  movement: "/community/photo6.jpg",   // large group energy shot for movement section
+  // Strip: only real candid community shots — no event templates
   strip: [
-    "/community/photo0.jpg",
     "/community/photo2.jpg",
     "/community/photo6.jpg",
-    "/community/photo10.jpg",
-    "/community/photo11.jpg",
-    "/community/photo3.jpg",
-    "/community/photo1.jpg",
     "/community/photo9.jpg",
+    "/community/photo10.jpg",
+    "/community/photo1.jpg",
   ],
 };
 

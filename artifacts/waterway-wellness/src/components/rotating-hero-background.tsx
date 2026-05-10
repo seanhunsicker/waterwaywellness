@@ -12,13 +12,13 @@ const HERO_VIDEOS: string[] = [
 ];
 
 // Fallback community photo slideshow used until video clips are added
+// Only real candid shots — no event flyers or promotional templates
 const FALLBACK_PHOTOS = [
-  "/community/photo9.jpg",
-  "/community/photo0.jpg",
-  "/community/photo6.jpg",
-  "/community/photo10.jpg",
+  "/community/photo1.jpg",
   "/community/photo2.jpg",
-  "/community/photo11.jpg",
+  "/community/photo6.jpg",
+  "/community/photo9.jpg",
+  "/community/photo10.jpg",
 ];
 
 const INTERVAL_MS = 4500;

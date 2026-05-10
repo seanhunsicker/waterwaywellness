@@ -15,7 +15,9 @@ export function CartDrawer() {
 
   const subtotal = items.reduce((sum, i) => sum + i.price * i.quantity, 0);
 
-  const discount = promoCode
+  const isAtCost = promoCode?.type === "at_cost";
+
+  const discount = promoCode && !isAtCost
     ? promoCode.percentOff != null
       ? Math.round(subtotal * (promoCode.percentOff / 100))
       : (promoCode.amountOff ?? 0)
@@ -164,7 +166,9 @@ export function CartDrawer() {
                         <div>
                           <p className="text-primary font-bold text-sm">{promoCode.code}</p>
                           <p className="text-primary/70 text-xs">
-                            {promoCode.percentOff != null
+                            {isAtCost
+                              ? "At-cost pricing — you pay what we pay"
+                              : promoCode.percentOff != null
                               ? `${promoCode.percentOff}% off`
                               : `$${((promoCode.amountOff ?? 0) / 100).toFixed(2)} off`}
                           </p>
@@ -217,11 +221,17 @@ export function CartDrawer() {
                         <span className="text-primary font-bold">−${(discount / 100).toFixed(2)}</span>
                       </div>
                     )}
+                    {isAtCost && (
+                      <div className="flex items-center justify-between text-sm">
+                        <span className="text-primary">ZINGO discount</span>
+                        <span className="text-primary font-bold">applied at checkout</span>
+                      </div>
+                    )}
                     <div className="flex items-center justify-between font-bold">
                       <span className="text-foreground">Total</span>
                       <span className="text-foreground">${(total / 100).toFixed(2)}</span>
                     </div>
-                    <p className="text-xs text-foreground/40">+ shipping at checkout</p>
+                    <p className="text-xs text-foreground/40">{isAtCost ? "Exact discount calculated at checkout" : "+ shipping at checkout"}</p>
                   </div>
 
                   <button

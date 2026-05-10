@@ -13,8 +13,10 @@ export interface CartItem {
 export interface PromoCode {
   id: string;
   code: string;
+  type?: "standard" | "at_cost";
   percentOff: number | null;
   amountOff: number | null;
+  label?: string;
 }
 
 interface CartContextValue {

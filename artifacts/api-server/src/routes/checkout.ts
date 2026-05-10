@@ -104,10 +104,24 @@ router.get("/checkout/config", async (req, res): Promise<void> => {
   }
 });
 
+const ZINGO_CODE = "ZINGO";
+
 router.get("/checkout/validate-coupon", async (req, res): Promise<void> => {
   const { code } = req.query;
   if (!code || typeof code !== "string") {
     res.status(400).json({ error: "Missing code" });
+    return;
+  }
+  if (code.trim().toUpperCase() === ZINGO_CODE) {
+    res.json({
+      valid: true,
+      id: "ZINGO_AT_COST",
+      code: ZINGO_CODE,
+      type: "at_cost",
+      percentOff: null,
+      amountOff: null,
+      label: "At-cost pricing — you pay what we pay",
+    });
     return;
   }
   try {
@@ -123,6 +137,7 @@ router.get("/checkout/validate-coupon", async (req, res): Promise<void> => {
       valid: true,
       id: promo.id,
       code: promo.code,
+      type: "standard",
       percentOff: coupon.percent_off ?? null,
       amountOff: coupon.amount_off ?? null,
     });
@@ -131,6 +146,47 @@ router.get("/checkout/validate-coupon", async (req, res): Promise<void> => {
     res.status(500).json({ error: "Could not validate code" });
   }
 });
+
+const PRINTIFY_SHIPPING: Record<number, { first: number; additional: number }> = {
+  77: { first: 769, additional: 209 },
+  706: { first: 399, additional: 209 },
+};
+
+const DEFAULT_SHIPPING = { first: 699, additional: 209 };
+
+async function computeAtCostDiscount(
+  items: Array<{ product_id: string; variant_id: number; quantity: number }>
+): Promise<number> {
+  const products = await Promise.all(
+    items.map(async (item) => {
+      const product = await printify.getProduct(item.product_id);
+      const variant = product.variants.find((v) => v.id === item.variant_id);
+      if (!variant) throw new Error(`Variant ${item.variant_id} not found`);
+      return { product, variant, quantity: item.quantity };
+    })
+  );
+
+  let totalDiscount = 0;
+
+  for (const { product, variant, quantity } of products) {
+    const markup = variant.price - variant.cost;
+    totalDiscount += markup * quantity;
+  }
+
+  let firstItemDone = false;
+  for (const { product, quantity } of products) {
+    const shipping = PRINTIFY_SHIPPING[(product as any).blueprint_id] ?? DEFAULT_SHIPPING;
+    if (!firstItemDone) {
+      totalDiscount += shipping.first;
+      totalDiscount += shipping.additional * (quantity - 1);
+      firstItemDone = true;
+    } else {
+      totalDiscount += shipping.additional * quantity;
+    }
+  }
+
+  return totalDiscount;
+}
 
 router.post("/checkout/embedded-session", async (req, res): Promise<void> => {
   try {
@@ -176,6 +232,25 @@ router.post("/checkout/embedded-session", async (req, res): Promise<void> => {
 
     const orderId = randomUUID();
 
+    let discountConfig: Record<string, unknown> = { allow_promotion_codes: true };
+
+    if (promoCodeId === "ZINGO_AT_COST") {
+      const discountAmount = await computeAtCostDiscount(items);
+      req.log.info({ discountAmount }, "ZINGO at-cost discount computed");
+
+      const tempCoupon = await stripe.coupons.create({
+        amount_off: discountAmount,
+        currency: "usd",
+        duration: "once",
+        name: "ZINGO — At-Cost Pricing",
+        max_redemptions: 1,
+      });
+
+      discountConfig = { discounts: [{ coupon: tempCoupon.id }] };
+    } else if (promoCodeId) {
+      discountConfig = { discounts: [{ promotion_code: promoCodeId }] };
+    }
+
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ["card"],
       line_items: lineItems,
@@ -211,10 +286,8 @@ router.post("/checkout/embedded-session", async (req, res): Promise<void> => {
       ],
       return_url: `${baseUrl}/shop/success?session_id={CHECKOUT_SESSION_ID}`,
       metadata: { order_id: orderId },
-      ...(promoCodeId
-        ? { discounts: [{ promotion_code: promoCodeId }] }
-        : { allow_promotion_codes: true }),
-    });
+      ...discountConfig,
+    } as Parameters<typeof stripe.checkout.sessions.create>[0]);
 
     await db.insert(ordersTable).values({
       id: orderId,

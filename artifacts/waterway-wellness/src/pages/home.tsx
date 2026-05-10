@@ -345,7 +345,7 @@ export default function Home() {
               alt="Throw Up The Dub" 
               className="w-full max-w-5xl mx-auto h-auto drop-shadow-md" 
             />
-            <p className="text-2xl md:text-4xl font-bold text-primary-foreground max-w-3xl mx-auto leading-tight" style={{ fontFamily: "'SquidBoy', sans-serif" }}>
+            <p className="text-2xl md:text-4xl font-semibold tracking-tight text-primary-foreground max-w-3xl mx-auto leading-tight">
               The Dub is the movement.
             </p>
             <img
@@ -373,7 +373,7 @@ export default function Home() {
                   <span className="w-2 h-2 rounded-full bg-primary" />
                   The Gear
                 </div>
-                <h2 className="text-5xl md:text-7xl font-bold text-foreground leading-tight" style={{ fontFamily: "'SquidBoy', sans-serif" }}>
+                <h2 className="text-5xl md:text-7xl font-semibold tracking-tight text-foreground leading-none">
                   Rep The Dub.
                 </h2>
               </div>

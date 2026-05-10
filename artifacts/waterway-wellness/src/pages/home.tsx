@@ -1,5 +1,5 @@
 import { motion, useScroll, useTransform } from "framer-motion";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { Link } from "wouter";
 import { useQuery } from "@tanstack/react-query";
 import { Nav } from "@/components/nav";
@@ -7,6 +7,7 @@ import { Footer } from "@/components/footer";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ArrowRight } from "lucide-react";
+import { CheckoutModal } from "@/components/checkout-modal";
 
 // Real community photos (served from /public/community/)
 const PHOTOS = {
@@ -77,6 +78,7 @@ export default function Home() {
   const containerRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({ target: containerRef });
   const yHero = useTransform(scrollYProgress, [0, 1], ["0%", "50%"]);
+  const [checkoutItems, setCheckoutItems] = useState<Array<{ product_id: string; variant_id: number; quantity: number }> | null>(null);
 
   const { data: productsData } = useQuery<{ data: PrintifyProduct[] }>({
     queryKey: ["printify-products"],
@@ -88,6 +90,12 @@ export default function Home() {
     staleTime: 5 * 60 * 1000,
   });
   const featuredProducts = (productsData?.data ?? []).slice(0, 4);
+
+  function handleBuyProduct(item: PrintifyProduct) {
+    const defaultVariant = item.variants.find((v) => v.is_enabled && v.is_available);
+    if (!defaultVariant) return;
+    setCheckoutItems([{ product_id: item.id, variant_id: defaultVariant.id, quantity: 1 }]);
+  }
 
   return (
     <div className="bg-background min-h-[100dvh] w-full overflow-x-hidden selection:bg-primary selection:text-primary-foreground dark" ref={containerRef}>
@@ -349,11 +357,11 @@ export default function Home() {
                       className="group"
                       data-testid={`card-merch-${item.id}`}
                     >
-                      <Link
-                        href={`/shop/${item.id}`}
-                        className="flex flex-col rounded-3xl overflow-hidden border border-white/5 bg-card cursor-pointer"
+                      <button
+                        onClick={() => handleBuyProduct(item)}
+                        className="flex flex-col w-full rounded-3xl overflow-hidden border border-white/5 bg-card cursor-pointer text-left"
                       >
-                        <div className="relative aspect-square overflow-hidden bg-black/20">
+                        <div className="relative aspect-square overflow-hidden bg-black/20 w-full">
                           {getDefaultImage(item) && (
                             <img
                               src={getDefaultImage(item)}
@@ -376,7 +384,7 @@ export default function Home() {
                             <ArrowRight className="w-4 h-4 text-primary group-hover:text-primary-foreground transition-colors duration-300" />
                           </div>
                         </div>
-                      </Link>
+                      </button>
                     </motion.div>
                   ))}
             </div>
@@ -424,6 +432,13 @@ export default function Home() {
       </section>
 
       <Footer />
+
+      {checkoutItems && (
+        <CheckoutModal
+          items={checkoutItems}
+          onClose={() => setCheckoutItems(null)}
+        />
+      )}
     </div>
   );
 }

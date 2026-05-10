@@ -191,16 +191,27 @@ export default function Home() {
             
             <div className="order-1 lg:order-2 flex flex-col gap-8">
               <motion.div variants={fadeInUp}>
+                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-bold tracking-wide uppercase mb-6">
+                  <span className="w-2 h-2 rounded-full bg-primary" />
+                  The People's Run Club
+                </div>
                 <h2 className="text-4xl md:text-6xl font-bold text-foreground leading-tight mb-6">
                   More than miles. <br/>
                   <span className="text-primary">Mostly vibes.</span>
                 </h2>
                 <p className="text-lg text-muted-foreground leading-relaxed mb-6">
-                  Look, nobody actually likes running. But we do like showing up, catching a sunset, feeling the coastal breeze, and hanging out for two hours after we swore we were going home.
+                  We built this as a place away from the noise — somewhere to show up, connect with real people, and move your body without the pretense. No competitive times. No judgment. Just community, coastline, and genuine human connection.
                 </p>
-                <p className="text-lg text-muted-foreground leading-relaxed">
-                  Waterway Wellness is anti-pretentious, anti-degenerate, and deeply welcoming. Whether you're running an 8-minute mile or walking the whole thing with a coffee, you belong here.
+                <p className="text-lg text-muted-foreground leading-relaxed mb-10">
+                  Whether you're running an 8-minute mile or walking the whole thing with a coffee, you belong here. Our mission is simple: inspire as many people as possible to become the best version of themselves — together.
                 </p>
+                <motion.div variants={fadeInUp} className="flex flex-wrap gap-2">
+                  {["Motivate", "Health", "Inspire", "Connect", "Love"].map((v) => (
+                    <span key={v} className="px-4 py-2 rounded-full border border-primary/30 text-primary text-sm font-bold tracking-wide uppercase">
+                      {v}
+                    </span>
+                  ))}
+                </motion.div>
               </motion.div>
             </div>
           </motion.div>
@@ -242,47 +253,62 @@ export default function Home() {
             whileInView="visible"
             viewport={{ once: true, margin: "-100px" }}
             variants={staggerContainer}
-            className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center"
+            className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start"
           >
-            <div className="flex flex-col gap-8 z-10">
+            <div className="flex flex-col gap-10 z-10">
               <motion.div variants={fadeInUp}>
                 <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-bold tracking-wide uppercase mb-6">
                   <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
-                  Weekly Run
+                  When &amp; Where
                 </div>
-                <h2 className="text-5xl md:text-7xl font-bold text-foreground mb-8">
-                  Mondays at <br/>6:00 PM
-                </h2>
-                
-                <div className="space-y-6">
-                  <div className="flex items-start gap-4">
-                    <div className="w-12 h-12 rounded-2xl bg-background flex items-center justify-center shrink-0 border border-white/5">
-                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-primary"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+
+                {/* Monday — main event */}
+                <div className="mb-8">
+                  <h2 className="text-5xl md:text-7xl font-bold text-foreground mb-2">
+                    Mondays
+                  </h2>
+                  <p className="text-primary font-bold text-xl mb-6">Meet 6:00 PM · Run starts 6:30 PM</p>
+                  <div className="space-y-4">
+                    <div className="flex items-start gap-4">
+                      <div className="w-12 h-12 rounded-2xl bg-background flex items-center justify-center shrink-0 border border-white/5">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-primary"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+                      </div>
+                      <div>
+                        <h3 className="text-xl font-bold text-foreground">Laura Ward Plaza</h3>
+                        <p className="text-muted-foreground">Downtown Fort Lauderdale, FL</p>
+                      </div>
                     </div>
-                    <div>
-                      <h3 className="text-xl font-bold text-foreground">Laura Ward Plaza</h3>
-                      <p className="text-muted-foreground">Fort Lauderdale, FL</p>
-                    </div>
-                  </div>
-                  
-                  <div className="flex items-start gap-4">
-                    <div className="w-12 h-12 rounded-2xl bg-background flex items-center justify-center shrink-0 border border-white/5">
-                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-primary"><path d="m18 14-4-4 4-4"/><path d="M14 10h.01"/><path d="M10 14 6 10l4-4"/><path d="M10 10h.01"/><path d="M22 20V8h-4l-6-6-6 6H2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2z"/></svg>
-                    </div>
-                    <div>
-                      <h3 className="text-xl font-bold text-foreground">2 Miles</h3>
-                      <p className="text-muted-foreground">Run, jog, or walk. Your pace.</p>
+                    <div className="flex items-start gap-4">
+                      <div className="w-12 h-12 rounded-2xl bg-background flex items-center justify-center shrink-0 border border-white/5">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-primary"><path d="m18 14-4-4 4-4"/><path d="M14 10h.01"/><path d="M10 14 6 10l4-4"/><path d="M10 10h.01"/><path d="M22 20V8h-4l-6-6-6 6H2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2z"/></svg>
+                      </div>
+                      <div>
+                        <h3 className="text-xl font-bold text-foreground">2 Miles</h3>
+                        <p className="text-muted-foreground">Run, jog, or walk — your pace, always.</p>
+                      </div>
                     </div>
                   </div>
                 </div>
 
-                <div className="mt-12">
-                  <a href="https://instagram.com/waterway.wellness" target="_blank" rel="noopener noreferrer">
-                    <Button size="lg" className="h-14 px-8 text-lg font-bold rounded-full w-full sm:w-auto" data-testid="btn-rsvp">
-                      RSVP on Instagram
-                    </Button>
-                  </a>
+                {/* Other events */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-10">
+                  <div className="rounded-2xl bg-background border border-white/5 p-5">
+                    <p className="text-primary font-bold text-sm uppercase tracking-widest mb-1">Two-Mile Tuesdays</p>
+                    <p className="text-foreground font-bold text-lg mb-1">Tarpon River Brewing</p>
+                    <p className="text-muted-foreground text-sm">6:30 PM · First 35 runners get a free beer 🍺</p>
+                  </div>
+                  <div className="rounded-2xl bg-background border border-white/5 p-5">
+                    <p className="text-primary font-bold text-sm uppercase tracking-widest mb-1">Weekend Pop-ups</p>
+                    <p className="text-foreground font-bold text-lg mb-1">Hype &amp; Zen Events</p>
+                    <p className="text-muted-foreground text-sm">Run + sound bath, ice bath parties &amp; yoga</p>
+                  </div>
                 </div>
+
+                <a href="https://instagram.com/waterway.wellness" target="_blank" rel="noopener noreferrer">
+                  <Button size="lg" className="h-14 px-8 text-lg font-bold rounded-full w-full sm:w-auto" data-testid="btn-rsvp">
+                    RSVP on Instagram
+                  </Button>
+                </a>
               </motion.div>
             </div>
             
@@ -291,7 +317,7 @@ export default function Home() {
                 <div className="absolute -inset-4 bg-primary/20 blur-2xl rounded-[3rem] -z-10" />
                 <img 
                   src={eventFlyer} 
-                  alt="2 Mile Run, Church by the Sea Flyer" 
+                  alt="Waterway Wellness Event Flyer" 
                   className="w-full h-auto rounded-2xl shadow-2xl border border-white/10" 
                 />
               </div>

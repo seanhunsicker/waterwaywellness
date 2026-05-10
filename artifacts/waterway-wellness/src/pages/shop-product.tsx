@@ -156,7 +156,7 @@ export default function ShopProduct() {
   return (
     <div className="dark min-h-screen bg-background text-foreground overflow-x-hidden">
       <Nav />
-      <main className="pt-24 pb-24 px-4 md:px-6 max-w-6xl mx-auto">
+      <main className="pt-24 pb-24 px-4 md:px-6 max-w-6xl mx-auto w-full">
         <Link href="/shop" className="inline-flex items-center gap-1 text-foreground/50 hover:text-foreground transition-colors text-sm mb-8">
           <ChevronLeft className="w-4 h-4" />
           Back to shop
@@ -175,7 +175,7 @@ export default function ShopProduct() {
               )}
             </div>
             {images.length > 1 && (
-              <div className="flex gap-2 overflow-x-auto pb-1">
+              <div className="flex gap-2 overflow-x-auto pb-1 max-w-full">
                 {images.slice(0, 8).map((img, i) => (
                   <button
                     key={i}
@@ -257,7 +257,7 @@ export default function ShopProduct() {
 
             {product.description && (
               <p
-                className="text-foreground/60 text-sm leading-relaxed"
+                className="text-foreground/60 text-sm leading-relaxed break-words"
                 dangerouslySetInnerHTML={{
                   __html: product.description
                     .replace(/<br\s*\/?>/gi, "\n")

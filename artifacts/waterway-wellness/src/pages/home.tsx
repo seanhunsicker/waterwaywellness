@@ -239,20 +239,20 @@ export default function Home() {
               <motion.div variants={fadeInUp}>
                 <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-bold tracking-wide uppercase mb-6">
                   <span className="w-2 h-2 rounded-full bg-primary" />
-                  The People's Run Club
+                  Fort Lauderdale, FL
                 </div>
                 <h2 className="text-4xl md:text-6xl font-bold text-foreground leading-tight mb-6">
-                  The best place to meet<br/>
-                  <span className="text-primary">genuine people.</span>
+                  Running is just<br/>
+                  <span className="text-primary">the excuse.</span>
                 </h2>
                 <p className="text-lg text-foreground/75 leading-relaxed mb-6">
-                  We built this as a place away from the noise of the world — somewhere real people show up, move their bodies, and actually connect. Not networking. Not performance. Just genuine human beings finding their people.
+                  We started this because we were tired of not knowing anyone in our own city. Now a few hundred people show up every week — some run fast, some run slow, some just walk. Doesn't matter.
                 </p>
                 <p className="text-lg text-foreground/75 leading-relaxed mb-10">
-                  Run, walk, or just show up. Our mission is to inspire as many people as possible to become the best version of themselves — and the people you meet along the way make that possible.
+                  No agenda. No brand deals. No one's trying to sell you anything. Just people who keep showing up because the company is actually good.
                 </p>
                 <motion.div variants={fadeInUp} className="flex flex-wrap gap-2">
-                  {["Motivate", "Health", "Inspire", "Connect", "Love"].map((v) => (
+                  {["Show Up", "Good People", "Fort Lauderdale", "Post-Run Hangs", "IYKYK"].map((v) => (
                     <span key={v} className="px-4 py-2 rounded-full bg-primary/15 border border-primary/40 text-primary text-sm font-bold tracking-wide uppercase">
                       {v}
                     </span>
@@ -522,11 +522,11 @@ export default function Home() {
             </motion.div>
             
             <motion.h2 variants={fadeInUp} className="text-4xl md:text-5xl font-bold text-foreground mb-6">
-              Your people are here.
+              Don't miss the next one.
             </motion.h2>
             
-            <motion.p variants={fadeInUp} className="text-lg text-muted-foreground max-w-xl mx-auto mb-10">
-              Drop your email and we'll keep you in the loop — upcoming runs, pop-up events, and post-run hangs. No spam, just genuine community.
+            <motion.p variants={fadeInUp} className="text-lg text-foreground/65 max-w-xl mx-auto mb-10">
+              Drop your email and we'll let you know when the next run is. That's it.
             </motion.p>
             
             <motion.form variants={fadeInUp} className="flex flex-col sm:flex-row gap-3 w-full max-w-md mx-auto" onSubmit={(e) => e.preventDefault()}>

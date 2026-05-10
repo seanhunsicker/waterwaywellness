@@ -184,12 +184,12 @@ export default function Home() {
           animate={{ opacity: 1 }}
           transition={{ delay: 1.2, duration: 1 }}
           onClick={() => document.getElementById("about")?.scrollIntoView({ behavior: "smooth" })}
-          className="absolute bottom-16 left-1/2 -translate-x-1/2 animate-bounce hidden md:block cursor-pointer"
+          className="absolute bottom-20 left-1/2 -translate-x-1/2 animate-bounce cursor-pointer"
           aria-label="Scroll down"
         >
-          <div className="w-6 h-10 rounded-full border-2 border-primary/40 flex items-start justify-center p-1.5 hover:border-primary transition-colors">
-            <div className="w-1 h-2 bg-primary/60 rounded-full" />
-          </div>
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-primary/60 hover:text-primary transition-colors">
+            <path d="m6 9 6 6 6-6"/>
+          </svg>
         </motion.button>
       </section>
 

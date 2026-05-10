@@ -74,6 +74,7 @@ export interface PrintifyProduct {
   images: PrintifyImage[];
   is_locked: boolean;
   visible: boolean;
+  external?: { id: string; handle: string };
 }
 
 export interface PrintifyProductsResponse {
@@ -118,7 +119,7 @@ export const printify = {
     const resp = await printifyFetch<PrintifyProductsResponse>(
       `/shops/${shopId}/products.json?limit=50`
     );
-    return resp.data.filter(p => p.visible);
+    return resp.data.filter(p => p.visible && !!p.external?.id);
   },
 
   async getProduct(productId: string): Promise<PrintifyProduct> {

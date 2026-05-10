@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "wouter";
 import { Nav } from "@/components/nav";
+import { CheckoutModal } from "@/components/checkout-modal";
 import { motion, AnimatePresence } from "framer-motion";
 
 interface PrintifyVariant {
@@ -52,7 +53,7 @@ function ProductCard({ product }: { product: PrintifyProduct }) {
   const [selectedVariant, setSelectedVariant] = useState<PrintifyVariant | null>(null);
   const [selectedOptions, setSelectedOptions] = useState<Record<number, number>>({});
   const [isExpanded, setIsExpanded] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const [checkoutItems, setCheckoutItems] = useState<Array<{ product_id: string; variant_id: number; quantity: number }> | null>(null);
 
   const enabledVariants = product.variants.filter((v) => v.is_enabled && v.is_available);
   const defaultVariant = enabledVariants[0];
@@ -74,28 +75,9 @@ function ProductCard({ product }: { product: PrintifyProduct }) {
     if (matched) setSelectedVariant(matched);
   }
 
-  async function handleBuy() {
+  function handleBuy() {
     if (!activeVariant) return;
-    setIsLoading(true);
-    try {
-      const resp = await fetch("/api/checkout/session", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          items: [{ product_id: product.id, variant_id: activeVariant.id, quantity: 1 }],
-        }),
-      });
-      const data = await resp.json();
-      if (data.url) {
-        window.location.href = data.url;
-      } else {
-        alert(data.error ?? "Checkout failed. Please try again.");
-      }
-    } catch {
-      alert("Something went wrong. Please try again.");
-    } finally {
-      setIsLoading(false);
-    }
+    setCheckoutItems([{ product_id: product.id, variant_id: activeVariant.id, quantity: 1 }]);
   }
 
   return (
@@ -196,12 +178,19 @@ function ProductCard({ product }: { product: PrintifyProduct }) {
 
         <button
           onClick={handleBuy}
-          disabled={!activeVariant || isLoading}
+          disabled={!activeVariant}
           className="mt-auto w-full bg-primary hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed text-primary-foreground font-bold py-3 rounded-xl transition-all active:scale-95"
         >
-          {isLoading ? "Redirecting…" : "Buy Now"}
+          Buy Now
         </button>
       </div>
+
+      {checkoutItems && (
+        <CheckoutModal
+          items={checkoutItems}
+          onClose={() => setCheckoutItems(null)}
+        />
+      )}
     </motion.div>
   );
 }

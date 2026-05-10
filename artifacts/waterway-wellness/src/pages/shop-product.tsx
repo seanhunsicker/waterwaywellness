@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useParams, Link } from "wouter";
 import { Nav } from "@/components/nav";
+import { CheckoutModal } from "@/components/checkout-modal";
 import { motion } from "framer-motion";
 import { ChevronLeft } from "lucide-react";
 
@@ -45,7 +46,7 @@ export default function ShopProduct() {
   const [selectedOptions, setSelectedOptions] = useState<Record<number, number>>({});
   const [selectedVariant, setSelectedVariant] = useState<PrintifyVariant | null>(null);
   const [activeImage, setActiveImage] = useState(0);
-  const [isLoading, setIsLoading] = useState(false);
+  const [checkoutItems, setCheckoutItems] = useState<Array<{ product_id: string; variant_id: number; quantity: number }> | null>(null);
 
   const { data, isLoading: fetching, error } = useQuery<{ data: PrintifyProduct }>({
     queryKey: ["printify-product", productId],
@@ -80,28 +81,9 @@ export default function ShopProduct() {
     }
   }
 
-  async function handleBuy() {
+  function handleBuy() {
     if (!activeVariant || !product) return;
-    setIsLoading(true);
-    try {
-      const resp = await fetch("/api/checkout/session", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          items: [{ product_id: product.id, variant_id: activeVariant.id, quantity: 1 }],
-        }),
-      });
-      const result = await resp.json();
-      if (result.url) {
-        window.location.href = result.url;
-      } else {
-        alert(result.error ?? "Checkout failed. Please try again.");
-      }
-    } catch {
-      alert("Something went wrong. Please try again.");
-    } finally {
-      setIsLoading(false);
-    }
+    setCheckoutItems([{ product_id: product.id, variant_id: activeVariant.id, quantity: 1 }]);
   }
 
   if (fetching) {
@@ -246,10 +228,10 @@ export default function ShopProduct() {
             <div className="mt-auto space-y-3">
               <button
                 onClick={handleBuy}
-                disabled={!activeVariant || isLoading}
+                disabled={!activeVariant}
                 className="w-full bg-primary hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed text-primary-foreground font-bold py-4 rounded-xl transition-all active:scale-95 text-lg"
               >
-                {isLoading ? "Redirecting to checkout…" : `Buy Now — ${price}`}
+                {`Buy Now — ${price}`}
               </button>
               <p className="text-center text-xs text-foreground/40">
                 Printed on demand · Ships in 5–10 business days
@@ -258,6 +240,13 @@ export default function ShopProduct() {
           </motion.div>
         </div>
       </main>
+
+      {checkoutItems && (
+        <CheckoutModal
+          items={checkoutItems}
+          onClose={() => setCheckoutItems(null)}
+        />
+      )}
     </div>
   );
 }

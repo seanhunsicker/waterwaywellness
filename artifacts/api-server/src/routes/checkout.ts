@@ -1,7 +1,7 @@
 import { Router, type IRouter } from "express";
 import { randomUUID } from "crypto";
 import { printify } from "../lib/printify";
-import { getUncachableStripeClient } from "../stripeClient";
+import { getUncachableStripeClient, getStripePublishableKey } from "../stripeClient";
 import { db } from "@workspace/db";
 import { ordersTable } from "@workspace/db";
 import { eq } from "drizzle-orm";
@@ -93,6 +93,111 @@ async function submitOrderToPrintify(stripeSessionId: string): Promise<void> {
 
   logger.info({ orderId: order.id, printifyOrderId: printifyOrder.id }, "Order successfully submitted to Printify");
 }
+
+router.get("/checkout/config", async (req, res): Promise<void> => {
+  try {
+    const publishableKey = await getStripePublishableKey();
+    res.json({ publishableKey });
+  } catch (err: any) {
+    req.log.error({ err }, "Failed to get Stripe config");
+    res.status(500).json({ error: err.message ?? "Config unavailable" });
+  }
+});
+
+router.post("/checkout/embedded-session", async (req, res): Promise<void> => {
+  try {
+    const { items } = req.body as {
+      items: Array<{ product_id: string; variant_id: number; quantity: number }>;
+    };
+
+    if (!items || items.length === 0) {
+      res.status(400).json({ error: "No items provided" });
+      return;
+    }
+
+    const stripe = await getUncachableStripeClient();
+
+    const domain = process.env.REPLIT_DOMAINS?.split(",")[0];
+    const baseUrl = domain ? `https://${domain}` : "http://localhost";
+
+    const lineItems = await Promise.all(
+      items.map(async (item) => {
+        const product = await printify.getProduct(item.product_id);
+        const variant = product.variants.find((v) => v.id === item.variant_id);
+        if (!variant) throw new Error(`Variant ${item.variant_id} not found`);
+
+        const image = product.images.find(
+          (img) => img.variant_ids.includes(item.variant_id) || img.is_default
+        );
+
+        return {
+          price_data: {
+            currency: "usd",
+            unit_amount: variant.price,
+            product_data: {
+              name: `${product.title} — ${variant.title}`,
+              description: product.description?.replace(/<[^>]+>/g, "").slice(0, 500) || undefined,
+              images: image ? [`${baseUrl}${image.src}`] : [],
+            },
+          },
+          quantity: item.quantity,
+        };
+      })
+    );
+
+    const orderId = randomUUID();
+
+    const session = await stripe.checkout.sessions.create({
+      payment_method_types: ["card"],
+      line_items: lineItems,
+      mode: "payment",
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      ui_mode: "embedded" as any,
+      shipping_address_collection: {
+        allowed_countries: ["US", "CA", "GB", "AU", "DE", "FR", "ES", "IT", "NL", "SE", "NO", "DK", "FI"],
+      },
+      shipping_options: [
+        {
+          shipping_rate_data: {
+            type: "fixed_amount",
+            fixed_amount: { amount: 699, currency: "usd" },
+            display_name: "Standard Shipping (5–10 business days)",
+            delivery_estimate: {
+              minimum: { unit: "business_day", value: 5 },
+              maximum: { unit: "business_day", value: 10 },
+            },
+          },
+        },
+        {
+          shipping_rate_data: {
+            type: "fixed_amount",
+            fixed_amount: { amount: 1299, currency: "usd" },
+            display_name: "Express Shipping (2–4 business days)",
+            delivery_estimate: {
+              minimum: { unit: "business_day", value: 2 },
+              maximum: { unit: "business_day", value: 4 },
+            },
+          },
+        },
+      ],
+      return_url: `${baseUrl}/shop/success?session_id={CHECKOUT_SESSION_ID}`,
+      metadata: { order_id: orderId },
+    });
+
+    await db.insert(ordersTable).values({
+      id: orderId,
+      stripeSessionId: session.id,
+      status: "pending",
+      items,
+      totalAmount: "0",
+    });
+
+    res.json({ clientSecret: session.client_secret });
+  } catch (err: any) {
+    req.log.error({ err }, "Failed to create embedded checkout session");
+    res.status(500).json({ error: err.message ?? "Checkout failed" });
+  }
+});
 
 router.post("/checkout/session", async (req, res): Promise<void> => {
   try {

@@ -196,14 +196,14 @@ export default function Home() {
                   The People's Run Club
                 </div>
                 <h2 className="text-4xl md:text-6xl font-bold text-foreground leading-tight mb-6">
-                  More than miles. <br/>
-                  <span className="text-primary">Mostly vibes.</span>
+                  The best place to meet<br/>
+                  <span className="text-primary">genuine people.</span>
                 </h2>
                 <p className="text-lg text-muted-foreground leading-relaxed mb-6">
-                  We built this as a place away from the noise — somewhere to show up, connect with real people, and move your body without the pretense. No competitive times. No judgment. Just community, coastline, and genuine human connection.
+                  We built this as a place away from the noise of the world — somewhere real people show up, move their bodies, and actually connect. Not networking. Not performance. Just genuine human beings finding their people.
                 </p>
                 <p className="text-lg text-muted-foreground leading-relaxed mb-10">
-                  Whether you're running an 8-minute mile or walking the whole thing with a coffee, you belong here. Our mission is simple: inspire as many people as possible to become the best version of themselves — together.
+                  Run, walk, or just show up. Our mission is to inspire as many people as possible to become the best version of themselves — and the people you meet along the way make that possible.
                 </p>
                 <motion.div variants={fadeInUp} className="flex flex-wrap gap-2">
                   {["Motivate", "Health", "Inspire", "Connect", "Love"].map((v) => (
@@ -465,11 +465,11 @@ export default function Home() {
             </motion.div>
             
             <motion.h2 variants={fadeInUp} className="text-4xl md:text-5xl font-bold text-foreground mb-6">
-              Don't run alone.
+              Your people are here.
             </motion.h2>
             
             <motion.p variants={fadeInUp} className="text-lg text-muted-foreground max-w-xl mx-auto mb-10">
-              Drop your email to get notified about upcoming runs, routes, and post-run hangs. No spam, just vibes.
+              Drop your email and we'll keep you in the loop — upcoming runs, pop-up events, and post-run hangs. No spam, just genuine community.
             </motion.p>
             
             <motion.form variants={fadeInUp} className="flex flex-col sm:flex-row gap-3 w-full max-w-md mx-auto" onSubmit={(e) => e.preventDefault()}>

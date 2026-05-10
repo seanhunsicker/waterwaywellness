@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useParams, Link } from "wouter";
 import { Nav } from "@/components/nav";
@@ -58,6 +58,14 @@ export default function ShopProduct() {
   });
 
   const product = data?.data;
+
+  useEffect(() => {
+    if (product?.title) {
+      document.title = `${product.title} — Waterway Wellness Run Club`;
+    }
+    return () => { document.title = "Waterway Wellness Run Club | Fort Lauderdale, FL"; };
+  }, [product?.title]);
+
   const enabledVariants = product?.variants.filter((v) => v.is_enabled && v.is_available) ?? [];
 
   // Find the variant that matches all explicitly selected options

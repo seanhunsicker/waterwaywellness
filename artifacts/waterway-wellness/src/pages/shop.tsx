@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "wouter";
 import { Nav } from "@/components/nav";
@@ -244,6 +244,11 @@ function ShopSkeleton() {
 }
 
 export default function Shop() {
+  useEffect(() => {
+    document.title = "Shop — Waterway Wellness Run Club";
+    return () => { document.title = "Waterway Wellness Run Club | Fort Lauderdale, FL"; };
+  }, []);
+
   const { data, isLoading, error } = useQuery<{ data: PrintifyProduct[] }>({
     queryKey: ["printify-products"],
     queryFn: async () => {

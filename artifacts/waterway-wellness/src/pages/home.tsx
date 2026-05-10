@@ -208,7 +208,10 @@ export default function Home() {
       </section>
 
       {/* 2. THE VIBE / MISSION */}
-      <section id="about" className="py-16 md:py-32 px-6 md:px-12 lg:px-24 bg-background relative z-10">
+      <section id="about" className="py-16 md:py-32 px-6 md:px-12 lg:px-24 bg-background relative z-10 overflow-hidden">
+        {/* Ambient teal glow */}
+        <div className="absolute -top-32 -right-32 w-96 h-96 rounded-full bg-primary/10 blur-[120px] pointer-events-none" />
+        <div className="absolute bottom-0 -left-32 w-64 h-64 rounded-full bg-primary/8 blur-[100px] pointer-events-none" />
         <div className="max-w-7xl mx-auto">
           <motion.div 
             initial="hidden"
@@ -242,15 +245,15 @@ export default function Home() {
                   The best place to meet<br/>
                   <span className="text-primary">genuine people.</span>
                 </h2>
-                <p className="text-lg text-muted-foreground leading-relaxed mb-6">
+                <p className="text-lg text-foreground/75 leading-relaxed mb-6">
                   We built this as a place away from the noise of the world — somewhere real people show up, move their bodies, and actually connect. Not networking. Not performance. Just genuine human beings finding their people.
                 </p>
-                <p className="text-lg text-muted-foreground leading-relaxed mb-10">
+                <p className="text-lg text-foreground/75 leading-relaxed mb-10">
                   Run, walk, or just show up. Our mission is to inspire as many people as possible to become the best version of themselves — and the people you meet along the way make that possible.
                 </p>
                 <motion.div variants={fadeInUp} className="flex flex-wrap gap-2">
                   {["Motivate", "Health", "Inspire", "Connect", "Love"].map((v) => (
-                    <span key={v} className="px-4 py-2 rounded-full border border-primary/30 text-primary text-sm font-bold tracking-wide uppercase">
+                    <span key={v} className="px-4 py-2 rounded-full bg-primary/15 border border-primary/40 text-primary text-sm font-bold tracking-wide uppercase">
                       {v}
                     </span>
                   ))}
@@ -287,6 +290,7 @@ export default function Home() {
 
       {/* 4. WHEN & WHERE (FLYER SECTION) */}
       <section id="details" className="py-16 md:py-32 px-6 md:px-12 lg:px-24 bg-card relative overflow-hidden">
+        <div className="absolute top-0 left-0 w-72 h-72 rounded-full bg-primary/12 blur-[100px] pointer-events-none -translate-x-1/2 -translate-y-1/2" />
         <div className="absolute top-0 right-0 w-1/2 h-full opacity-10 pointer-events-none">
           <img src={wwOutline} alt="" className="w-full h-full object-cover object-right mix-blend-overlay" />
         </div>
@@ -319,7 +323,7 @@ export default function Home() {
                       </div>
                       <div>
                         <h3 className="text-xl font-bold text-foreground">Laura Ward Plaza</h3>
-                        <p className="text-muted-foreground">Downtown Fort Lauderdale, FL</p>
+                        <p className="text-foreground/60">Downtown Fort Lauderdale, FL</p>
                       </div>
                     </div>
                     <div className="flex items-start gap-4">
@@ -328,7 +332,7 @@ export default function Home() {
                       </div>
                       <div>
                         <h3 className="text-xl font-bold text-foreground">2 Miles</h3>
-                        <p className="text-muted-foreground">Run, jog, or walk — your pace, always.</p>
+                        <p className="text-foreground/60">Run, jog, or walk — your pace, always.</p>
                       </div>
                     </div>
                   </div>
@@ -409,7 +413,8 @@ export default function Home() {
       </section>
 
       {/* 5. MERCH SECTION */}
-      <section id="merch" className="py-16 md:py-32 px-6 md:px-12 lg:px-24 bg-background relative z-10">
+      <section id="merch" className="py-16 md:py-32 px-6 md:px-12 lg:px-24 bg-background relative z-10 overflow-hidden">
+        <div className="absolute top-1/2 right-0 w-96 h-96 rounded-full bg-primary/10 blur-[120px] pointer-events-none -translate-y-1/2 translate-x-1/2" />
         <div className="max-w-7xl mx-auto">
           <motion.div
             initial="hidden"

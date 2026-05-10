@@ -45,4 +45,17 @@ app.listen(port, (err) => {
     process.exit(1);
   }
   logger.info({ port }, "Server listening");
+
+  const domain = process.env.REPLIT_DOMAINS?.split(",")[0];
+  const baseUrl = domain ? `https://${domain}` : `http://localhost:${port}`;
+  const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
+
+  logger.info(
+    {
+      webhookUrl: `${baseUrl}/api/stripe/webhook`,
+      signatureVerification: webhookSecret ? "enabled" : "disabled — set STRIPE_WEBHOOK_SECRET env var to enable",
+      event: "checkout.session.completed",
+    },
+    "Stripe webhook endpoint ready"
+  );
 });

@@ -28,11 +28,15 @@ const PHOTOS = {
 };
 
 // Brand assets
-import runClubWordmark from "@assets/WaterwayWellness_RunClub_Wordmark_Seafoam_1778255396810.png";
-import badgeLogo from "@assets/tiny_version_1778255352779.png";
-import throwUpDubIvory from "@assets/ThrowUpTheDub_Horizontal_Ivory_1778255332909.png";
+import runClubWordmark from "@assets/WaterwayWellness_RunClub_Wordmark_Seafoam_1778376675145.png";
+import emblemSeafoam from "@assets/WaterwayWellness_Emblem_Seafoam_1778376526187.png";
+import emblemIvory from "@assets/WaterwayWellness_Emblem_Ivory_1778376526187.png";
+import throwUpDubIvory from "@assets/ThrowUpTheDub_Horizontal_Ivory_1778375686628.png";
+import throwUpDubSeafoam from "@assets/ThrowUpTheDub_Horizontal_Seafoam_1778375686628.png";
+import wRunClubSeafoam from "@assets/WaterwayWellness_WRunClub_Seafoam_1778376526186.png";
 import eventFlyer from "@assets/Location2_SOCIAL_9x16_1778255341413.jpg";
 import wwOutline from "@assets/WaterwayWellness_WWOutline_Seafoam_1778255372780.png";
+import { RotatingHeroBackground } from "@/components/rotating-hero-background";
 
 interface PrintifyProduct {
   id: string;
@@ -119,9 +123,8 @@ export default function Home() {
       
       {/* 1. HERO SECTION */}
       <section className="relative min-h-[100dvh] flex items-center justify-center pt-20 overflow-hidden">
-        <motion.div style={{ y: yHero }} className="absolute inset-0 z-0 opacity-50">
-          <img src={PHOTOS.hero} alt="Waterway Wellness community" className="w-full h-full object-cover" />
-          <div className="absolute inset-0 bg-gradient-to-b from-background/40 via-background/80 to-background" />
+        <motion.div style={{ y: yHero }} className="absolute inset-0 z-0">
+          <RotatingHeroBackground />
         </motion.div>
 
         <div className="relative z-10 container mx-auto px-6 flex flex-col items-center text-center">
@@ -140,7 +143,7 @@ export default function Home() {
             transition={{ duration: 0.8, delay: 0.4 }}
             className="flex flex-col items-center gap-6"
           >
-            <p className="text-2xl md:text-3xl font-medium text-foreground max-w-2xl text-balance">
+            <p className="text-2xl md:text-3xl font-medium text-foreground max-w-2xl text-balance" style={{ fontFamily: "'SquidBoy', sans-serif" }}>
               We hate running so we started a run club.
             </p>
             <div className="flex items-center gap-4 text-muted-foreground font-medium uppercase tracking-widest text-sm">
@@ -184,13 +187,13 @@ export default function Home() {
                 transition={{ duration: 0.8, delay: 0.4 }}
                 className="absolute -bottom-8 -left-8 w-32 md:w-48 z-20 drop-shadow-2xl"
               >
-                <img src={badgeLogo} alt="Waterway Wellness Badge" className="w-full h-auto" />
+                <img src={emblemSeafoam} alt="Waterway Wellness Emblem" className="w-full h-auto" />
               </motion.div>
             </div>
             
             <div className="order-1 lg:order-2 flex flex-col gap-8">
               <motion.div variants={fadeInUp}>
-                <h2 className="text-4xl md:text-6xl font-bold text-foreground leading-tight mb-6">
+                <h2 className="text-4xl md:text-6xl font-bold text-foreground leading-tight mb-6" style={{ fontFamily: "'SquidBoy', sans-serif" }}>
                   More than miles. <br/>
                   <span className="text-primary">Mostly vibes.</span>
                 </h2>
@@ -311,15 +314,21 @@ export default function Home() {
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8 }}
+            className="flex flex-col items-center gap-8"
           >
             <img 
               src={throwUpDubIvory} 
               alt="Throw Up The Dub" 
-              className="w-full max-w-5xl mx-auto h-auto drop-shadow-md mb-8" 
+              className="w-full max-w-5xl mx-auto h-auto drop-shadow-md" 
             />
-            <p className="text-2xl md:text-4xl font-bold text-primary-foreground max-w-3xl mx-auto leading-tight">
+            <p className="text-2xl md:text-4xl font-bold text-primary-foreground max-w-3xl mx-auto leading-tight" style={{ fontFamily: "'SquidBoy', sans-serif" }}>
               The Dub is the movement.
             </p>
+            <img
+              src={wRunClubSeafoam}
+              alt="W Run Club"
+              className="w-24 md:w-32 h-auto opacity-80 drop-shadow-lg"
+            />
           </motion.div>
         </div>
       </section>
@@ -340,7 +349,7 @@ export default function Home() {
                   <span className="w-2 h-2 rounded-full bg-primary" />
                   The Gear
                 </div>
-                <h2 className="text-5xl md:text-7xl font-bold text-foreground leading-tight">
+                <h2 className="text-5xl md:text-7xl font-bold text-foreground leading-tight" style={{ fontFamily: "'SquidBoy', sans-serif" }}>
                   Rep The Dub.
                 </h2>
               </div>

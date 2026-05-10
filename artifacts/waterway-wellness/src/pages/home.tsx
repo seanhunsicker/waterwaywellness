@@ -12,16 +12,24 @@ import { useCart } from "@/context/cart";
 
 // Real community photos (served from /public/community/)
 const PHOTOS = {
-  hero: "/community/photo9.jpg",       // big group shot for hero
-  vibe: "/community/photo1.jpg",       // guy throwing up W — community Kodak moment
-  movement: "/community/photo6.jpg",   // large group energy shot for movement section
-  // Strip: only real candid community shots — no event templates
+  hero: "/community/photo9.jpg",
+  vibe: "/community/photo19.jpg",      // Monday crew gathering at Laura Ward Plaza
+  movement: "/community/photo6.jpg",
   strip: [
-    "/community/photo2.jpg",
-    "/community/photo6.jpg",
-    "/community/photo9.jpg",
-    "/community/photo10.jpg",
-    "/community/photo1.jpg",
+    "/community/photo12.jpg",  // running action — orange bandana
+    "/community/photo21.jpg",  // high-five tunnel at night
+    "/community/photo14.jpg",  // running action — orange shades
+    "/community/photo23.jpg",  // DJ at the decks
+    "/community/photo13.jpg",  // yoga / sound bath purple
+    "/community/photo1.jpg",   // kodak W guy
+    "/community/photo15.jpg",  // throw up the dub shirt (black)
+    "/community/photo16.jpg",  // Red Bull cans
+    "/community/photo17.jpg",  // throw up the dub shirt (white)
+    "/community/photo18.jpg",  // shirtless guy Laura Ward Plaza
+    "/community/photo20.jpg",  // Imprint crew at table
+    "/community/photo22.jpg",  // Imprint table wider shot
+    "/community/photo2.jpg",   // early group shot with banner
+    "/community/photo10.jpg",  // group at PYRA
   ],
 };
 

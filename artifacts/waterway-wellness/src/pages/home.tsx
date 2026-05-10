@@ -1,6 +1,7 @@
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useRef } from "react";
 import { Link } from "wouter";
+import { useQuery } from "@tanstack/react-query";
 import { Nav } from "@/components/nav";
 import { Footer } from "@/components/footer";
 import { Button } from "@/components/ui/button";
@@ -28,53 +29,36 @@ const PHOTOS = {
 import runClubWordmark from "@assets/WaterwayWellness_RunClub_Wordmark_Seafoam_1778255396810.png";
 import badgeLogo from "@assets/tiny_version_1778255352779.png";
 import throwUpDubIvory from "@assets/ThrowUpTheDub_Horizontal_Ivory_1778255332909.png";
-import throwUpDubSeafoam from "@assets/ThrowUpTheDub_Horizontal_Seafoam_1778255326346.png";
 import eventFlyer from "@assets/Location2_SOCIAL_9x16_1778255341413.jpg";
 import wwOutline from "@assets/WaterwayWellness_WWOutline_Seafoam_1778255372780.png";
-import fullWordmark from "@assets/WaterwayWellness_FullWordmark_Seafoam_1778255383648.png";
 
-const MERCH = [
-  {
-    id: "698fa025bca977ae630b527b",
-    name: "Throw Up The Dub Hoodie",
-    price: "$32.99",
-    tag: "Hoodie",
-    bg: "#0f1a18",
-    asset: throwUpDubIvory,
-    assetAlt: "Throw Up The Dub",
-    assetClass: "w-4/5 mx-auto mt-auto",
-  },
-  {
-    id: "6989163283b74d3ce6019200",
-    name: "Throw Up The Dub T-Shirt",
-    price: "$24.99",
-    tag: "T-Shirt",
-    bg: "#0f1a18",
-    asset: throwUpDubSeafoam,
-    assetAlt: "Throw Up The Dub",
-    assetClass: "w-4/5 mx-auto mt-auto",
-  },
-  {
-    id: "698f9d638406554f63047ba0",
-    name: "WW Emblem Hoodie",
-    price: "$32.99",
-    tag: "Hoodie",
-    bg: "#0f1a18",
-    asset: badgeLogo,
-    assetAlt: "Waterway Wellness Emblem",
-    assetClass: "w-3/4 mx-auto mt-auto",
-  },
-  {
-    id: "69891f2649f8687bb30f6535",
-    name: "WW Emblem T-Shirt",
-    price: "$24.99",
-    tag: "T-Shirt",
-    bg: "#f5f0e8",
-    asset: fullWordmark,
-    assetAlt: "Waterway Wellness Wordmark",
-    assetClass: "w-4/5 mx-auto mt-auto",
-  },
-];
+interface PrintifyProduct {
+  id: string;
+  title: string;
+  variants: { price: number; is_enabled: boolean; is_available: boolean }[];
+  images: { src: string; is_default: boolean }[];
+  tags: string[];
+}
+
+function getDefaultImage(product: PrintifyProduct): string {
+  return product.images.find((i) => i.is_default)?.src ?? product.images[0]?.src ?? "";
+}
+
+function getLowestPrice(product: PrintifyProduct): string {
+  const enabled = product.variants.filter((v) => v.is_enabled && v.is_available);
+  if (!enabled.length) return "";
+  const min = Math.min(...enabled.map((v) => v.price));
+  return `$${(min / 100).toFixed(2)}`;
+}
+
+function getTag(product: PrintifyProduct): string {
+  const t = product.title.toLowerCase();
+  if (t.includes("hoodie")) return "Hoodie";
+  if (t.includes("t-shirt") || t.includes("tee")) return "T-Shirt";
+  if (t.includes("tank")) return "Tank";
+  if (t.includes("mug") || t.includes("cup")) return "Mug";
+  return "Gear";
+}
 
 const fadeInUp = {
   hidden: { opacity: 0, y: 40 },
@@ -93,6 +77,17 @@ export default function Home() {
   const containerRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({ target: containerRef });
   const yHero = useTransform(scrollYProgress, [0, 1], ["0%", "50%"]);
+
+  const { data: productsData } = useQuery<{ data: PrintifyProduct[] }>({
+    queryKey: ["printify-products"],
+    queryFn: async () => {
+      const resp = await fetch("/api/printify/products");
+      if (!resp.ok) throw new Error("Failed to load products");
+      return resp.json();
+    },
+    staleTime: 5 * 60 * 1000,
+  });
+  const featuredProducts = (productsData?.data ?? []).slice(0, 4);
 
   return (
     <div className="bg-background min-h-[100dvh] w-full overflow-x-hidden selection:bg-primary selection:text-primary-foreground dark" ref={containerRef}>
@@ -335,46 +330,55 @@ export default function Home() {
             </motion.div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-              {MERCH.map((item) => (
-                <motion.div
-                  key={item.id}
-                  variants={fadeInUp}
-                  whileHover={{ y: -6 }}
-                  transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-                  className="group"
-                  data-testid={`card-merch-${item.id}`}
-                >
-                  <Link
-                    href={`/shop/${item.id}`}
-                    className="flex flex-col rounded-3xl overflow-hidden border border-white/5 bg-card cursor-pointer"
-                  >
-                    <div
-                      className="relative flex flex-col items-center justify-end pt-10 pb-6 px-6 min-h-[260px]"
-                      style={{ backgroundColor: item.bg }}
+              {featuredProducts.length === 0
+                ? [...Array(4)].map((_, i) => (
+                    <div key={i} className="rounded-3xl overflow-hidden border border-white/5 bg-card animate-pulse">
+                      <div className="min-h-[260px] bg-white/5" />
+                      <div className="p-5 space-y-2">
+                        <div className="h-4 bg-white/10 rounded w-3/4" />
+                        <div className="h-4 bg-white/10 rounded w-1/3" />
+                      </div>
+                    </div>
+                  ))
+                : featuredProducts.map((item) => (
+                    <motion.div
+                      key={item.id}
+                      variants={fadeInUp}
+                      whileHover={{ y: -6 }}
+                      transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+                      className="group"
+                      data-testid={`card-merch-${item.id}`}
                     >
-                      <div className="absolute top-4 left-4">
-                        <span className="text-xs font-bold tracking-widest uppercase px-3 py-1 rounded-full bg-white/10 text-white/60">
-                          {item.tag}
-                        </span>
-                      </div>
-                      <img
-                        src={item.asset}
-                        alt={item.assetAlt}
-                        className={`${item.assetClass} h-auto object-contain group-hover:scale-105 transition-transform duration-500 drop-shadow-2xl`}
-                      />
-                    </div>
-                    <div className="flex items-center justify-between p-5">
-                      <div>
-                        <p className="font-bold text-foreground text-sm leading-tight">{item.name}</p>
-                        <p className="text-primary font-bold mt-1">{item.price}</p>
-                      </div>
-                      <div className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center group-hover:bg-primary group-hover:text-primary-foreground transition-colors duration-300">
-                        <ArrowRight className="w-4 h-4 text-primary group-hover:text-primary-foreground transition-colors duration-300" />
-                      </div>
-                    </div>
-                  </Link>
-                </motion.div>
-              ))}
+                      <Link
+                        href={`/shop/${item.id}`}
+                        className="flex flex-col rounded-3xl overflow-hidden border border-white/5 bg-card cursor-pointer"
+                      >
+                        <div className="relative aspect-square overflow-hidden bg-black/20">
+                          {getDefaultImage(item) && (
+                            <img
+                              src={getDefaultImage(item)}
+                              alt={item.title}
+                              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                            />
+                          )}
+                          <div className="absolute top-4 left-4">
+                            <span className="text-xs font-bold tracking-widest uppercase px-3 py-1 rounded-full bg-black/50 text-white/80 backdrop-blur-sm">
+                              {getTag(item)}
+                            </span>
+                          </div>
+                        </div>
+                        <div className="flex items-center justify-between p-5">
+                          <div>
+                            <p className="font-bold text-foreground text-sm leading-tight">{item.title}</p>
+                            <p className="text-primary font-bold mt-1">{getLowestPrice(item)}</p>
+                          </div>
+                          <div className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center group-hover:bg-primary group-hover:text-primary-foreground transition-colors duration-300">
+                            <ArrowRight className="w-4 h-4 text-primary group-hover:text-primary-foreground transition-colors duration-300" />
+                          </div>
+                        </div>
+                      </Link>
+                    </motion.div>
+                  ))}
             </div>
           </motion.div>
         </div>

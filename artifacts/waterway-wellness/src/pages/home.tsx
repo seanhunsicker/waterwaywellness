@@ -141,7 +141,7 @@ export default function Home() {
             transition={{ duration: 0.8, delay: 0.4 }}
             className="flex flex-col items-center gap-6"
           >
-            <p className="text-2xl md:text-3xl font-medium text-foreground max-w-2xl text-balance" style={{ fontFamily: "'SquidBoy', sans-serif" }}>
+            <p className="text-2xl md:text-3xl font-medium text-foreground max-w-2xl text-balance">
               We hate running so we started a run club.
             </p>
             <div className="flex items-center gap-4 text-muted-foreground font-medium uppercase tracking-widest text-sm">

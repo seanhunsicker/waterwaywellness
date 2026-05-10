@@ -176,16 +176,18 @@ export default function Home() {
         </motion.div>
 
         {/* Scroll indicator */}
-        <motion.div 
+        <motion.button
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 1.2, duration: 1 }}
-          className="absolute bottom-16 left-1/2 -translate-x-1/2 animate-bounce hidden md:block"
+          onClick={() => document.getElementById("about")?.scrollIntoView({ behavior: "smooth" })}
+          className="absolute bottom-16 left-1/2 -translate-x-1/2 animate-bounce hidden md:block cursor-pointer"
+          aria-label="Scroll down"
         >
-          <div className="w-6 h-10 rounded-full border-2 border-primary/40 flex items-start justify-center p-1.5">
+          <div className="w-6 h-10 rounded-full border-2 border-primary/40 flex items-start justify-center p-1.5 hover:border-primary transition-colors">
             <div className="w-1 h-2 bg-primary/60 rounded-full" />
           </div>
-        </motion.div>
+        </motion.button>
       </section>
 
       {/* 2. THE VIBE / MISSION */}

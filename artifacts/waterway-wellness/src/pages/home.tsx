@@ -38,7 +38,7 @@ import emblemIvory from "@assets/WaterwayWellness_Emblem_Ivory_1778376526187.png
 import throwUpDubIvory from "@assets/ThrowUpTheDub_Horizontal_Ivory_1778375686628.png";
 import throwUpDubSeafoam from "@assets/ThrowUpTheDub_Horizontal_Seafoam_1778375686628.png";
 import wRunClubSeafoam from "@assets/WaterwayWellness_WRunClub_Seafoam_1778376526186.png";
-import eventFlyer from "@assets/Location2_SOCIAL_9x16_1778255341413.jpg";
+import eventFlyer from "@assets/Location2_SOCIAL_9x16_1778380028280.png";
 import wwOutline from "@assets/WaterwayWellness_WWOutline_Seafoam_1778255372780.png";
 import { RotatingHeroBackground } from "@/components/rotating-hero-background";
 

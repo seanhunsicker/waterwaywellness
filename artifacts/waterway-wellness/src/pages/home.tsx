@@ -158,21 +158,24 @@ export default function Home() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.8, duration: 1 }}
-          className="absolute bottom-0 inset-x-0 z-20 px-6 md:px-10 py-5 flex items-end justify-between gap-6"
+          className="absolute bottom-0 inset-x-0 z-20 px-5 md:px-10 py-4 md:py-5 flex items-center justify-between gap-4"
         >
-          {/* Three brand marks */}
-          <div className="hidden md:flex items-center gap-4 shrink-0">
-            <img src={emblemSeafoam} alt="" className="h-8 w-auto opacity-70" />
-            <img src={wRunClubSeafoam} alt="" className="h-6 w-auto opacity-70" />
-            <img src={wwOutline} alt="" className="h-7 w-auto opacity-70" />
+          {/* Three brand marks — visible on all sizes */}
+          <div className="flex items-center gap-3 shrink-0">
+            <img src={emblemSeafoam} alt="" className="h-6 md:h-8 w-auto opacity-70" />
+            <img src={wRunClubSeafoam} alt="" className="h-5 md:h-6 w-auto opacity-70" />
+            <img src={wwOutline} alt="" className="h-5 md:h-7 w-auto opacity-70" />
           </div>
 
-          {/* Editorial scattered text — mimics brand header typography */}
-          <div className="flex flex-wrap items-center gap-x-5 gap-y-1 text-[10px] md:text-xs font-bold uppercase tracking-[0.2em] text-foreground/40">
+          {/* Editorial text — single truncated line on mobile, scattered on desktop */}
+          <div className="hidden md:flex items-center gap-x-5 text-xs font-bold uppercase tracking-[0.2em] text-foreground/40">
             {["Throw Up The Dub®", "Meaningful Social Connections", "Fort Lauderdale, Florida", "Est. 2025", "The Dub Movement"].map((t) => (
               <span key={t}>{t}</span>
             ))}
           </div>
+          <p className="md:hidden text-[9px] font-bold uppercase tracking-[0.15em] text-foreground/40 text-right leading-tight">
+            Fort Lauderdale, FL · Est. 2025
+          </p>
         </motion.div>
 
         {/* Scroll indicator */}
@@ -191,7 +194,7 @@ export default function Home() {
       </section>
 
       {/* 2. THE VIBE / MISSION */}
-      <section id="about" className="py-32 px-6 md:px-12 lg:px-24 bg-background relative z-10">
+      <section id="about" className="py-16 md:py-32 px-6 md:px-12 lg:px-24 bg-background relative z-10">
         <div className="max-w-7xl mx-auto">
           <motion.div 
             initial="hidden"
@@ -209,7 +212,7 @@ export default function Home() {
                 whileInView={{ rotate: -5, scale: 1, opacity: 1 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.8, delay: 0.4 }}
-                className="absolute -bottom-8 -left-8 w-32 md:w-48 z-20 drop-shadow-2xl"
+                className="absolute -bottom-6 -left-4 md:-bottom-8 md:-left-8 w-24 md:w-48 z-20 drop-shadow-2xl"
               >
                 <img src={emblemSeafoam} alt="Waterway Wellness Emblem" className="w-full h-auto" />
               </motion.div>
@@ -268,7 +271,7 @@ export default function Home() {
       </div>
 
       {/* 4. WHEN & WHERE (FLYER SECTION) */}
-      <section id="details" className="py-32 px-6 md:px-12 lg:px-24 bg-card relative overflow-hidden">
+      <section id="details" className="py-16 md:py-32 px-6 md:px-12 lg:px-24 bg-card relative overflow-hidden">
         <div className="absolute top-0 right-0 w-1/2 h-full opacity-10 pointer-events-none">
           <img src={wwOutline} alt="" className="w-full h-full object-cover object-right mix-blend-overlay" />
         </div>
@@ -338,7 +341,7 @@ export default function Home() {
               </motion.div>
             </div>
             
-            <motion.div variants={fadeInUp} className="relative z-10 flex justify-center lg:justify-end">
+            <motion.div variants={fadeInUp} className="hidden lg:flex relative z-10 justify-end">
               <div className="relative max-w-sm w-full rotate-2 hover:rotate-0 transition-transform duration-500">
                 <div className="absolute -inset-4 bg-primary/20 blur-2xl rounded-[3rem] -z-10" />
                 <img 
@@ -353,7 +356,7 @@ export default function Home() {
       </section>
 
       {/* 4. THE MOVEMENT / THROW UP THE DUB */}
-      <section id="movement" className="py-32 bg-black relative flex items-center justify-center overflow-hidden">
+      <section id="movement" className="py-16 md:py-32 bg-black relative flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0">
           <img src={PHOTOS.movement} alt="Waterway Wellness community energy" className="w-full h-full object-cover" style={{ filter: "brightness(0.5) saturate(1.1)" }} />
         </div>
@@ -387,7 +390,7 @@ export default function Home() {
       </section>
 
       {/* 5. MERCH SECTION */}
-      <section id="merch" className="py-32 px-6 md:px-12 lg:px-24 bg-background relative z-10">
+      <section id="merch" className="py-16 md:py-32 px-6 md:px-12 lg:px-24 bg-background relative z-10">
         <div className="max-w-7xl mx-auto">
           <motion.div
             initial="hidden"
@@ -415,7 +418,7 @@ export default function Home() {
               </Link>
             </motion.div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-5">
               {featuredProducts.length === 0
                 ? [...Array(4)].map((_, i) => (
                     <div key={i} className="rounded-3xl overflow-hidden border border-white/5 bg-card animate-pulse">
@@ -449,22 +452,23 @@ export default function Home() {
                           </span>
                         </div>
                       </Link>
-                      <div className="p-5 flex flex-col gap-3 flex-1">
+                      <div className="p-3 md:p-5 flex flex-col gap-2 md:gap-3 flex-1">
                         <div>
-                          <p className="font-bold text-foreground text-sm leading-tight">{item.title}</p>
-                          <p className="text-primary font-bold mt-1">{getLowestPrice(item)}</p>
+                          <p className="font-bold text-foreground text-xs md:text-sm leading-tight">{item.title}</p>
+                          <p className="text-primary font-bold mt-1 text-sm">{getLowestPrice(item)}</p>
                         </div>
-                        <div className="flex gap-2 mt-auto">
+                        <div className="flex gap-1.5 md:gap-2 mt-auto">
                           <button
                             onClick={() => handleAddToCart(item)}
-                            className="flex-1 flex items-center justify-center gap-1.5 border border-white/20 hover:border-primary/60 text-foreground/70 hover:text-foreground font-semibold py-2.5 rounded-xl transition-all text-xs active:scale-95"
+                            className="flex-1 flex items-center justify-center gap-1 border border-white/20 hover:border-primary/60 text-foreground/70 hover:text-foreground font-semibold py-2 md:py-2.5 rounded-xl transition-all text-[10px] md:text-xs active:scale-95"
                           >
-                            <ShoppingCart className="w-3.5 h-3.5" />
-                            Add to Cart
+                            <ShoppingCart className="w-3 h-3 md:w-3.5 md:h-3.5" />
+                            <span className="hidden sm:inline">Add to Cart</span>
+                            <span className="sm:hidden">Cart</span>
                           </button>
                           <button
                             onClick={() => handleBuyProduct(item)}
-                            className="flex-1 bg-primary hover:bg-primary/90 text-primary-foreground font-bold py-2.5 rounded-xl transition-all text-xs active:scale-95"
+                            className="flex-1 bg-primary hover:bg-primary/90 text-primary-foreground font-bold py-2 md:py-2.5 rounded-xl transition-all text-[10px] md:text-xs active:scale-95"
                           >
                             Buy Now
                           </button>
@@ -478,8 +482,8 @@ export default function Home() {
       </section>
 
       {/* 6. NEWSLETTER / JOIN */}
-      <section className="py-32 px-6 bg-background">
-        <div className="max-w-4xl mx-auto bg-card rounded-[3rem] p-8 md:p-16 text-center border border-white/5 relative overflow-hidden">
+      <section className="py-16 md:py-32 px-6 bg-background">
+        <div className="max-w-4xl mx-auto bg-card rounded-[2rem] md:rounded-[3rem] p-8 md:p-16 text-center border border-white/5 relative overflow-hidden">
           <div className="absolute top-0 left-1/2 -translate-x-1/2 w-3/4 h-1/2 bg-primary/10 blur-[100px] -z-10" />
           
           <motion.div 

@@ -353,9 +353,9 @@ export default function Home() {
       {/* 4. THE MOVEMENT / THROW UP THE DUB */}
       <section id="movement" className="py-32 bg-black relative flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0">
-          <img src={PHOTOS.movement} alt="Waterway Wellness community energy" className="w-full h-full object-cover" style={{ filter: "brightness(0.25) saturate(0.5)" }} />
+          <img src={PHOTOS.movement} alt="Waterway Wellness community energy" className="w-full h-full object-cover" style={{ filter: "brightness(0.5) saturate(1.1)" }} />
         </div>
-        <div className="absolute inset-0 bg-black/50" />
+        <div className="absolute inset-0 bg-black/40" />
         
         <div className="relative z-10 container mx-auto px-6 text-center">
           <motion.div

@@ -1,5 +1,5 @@
 {
-  "installCommand": "pnpm install --no-frozen-lockfile",
+  "installCommand": "pnpm install --no-frozen-lockfile && pnpm rebuild esbuild",
   "buildCommand": "pnpm build",
   "outputDirectory": "artifacts/waterway-wellness/dist/public"
 }

@@ -119,7 +119,15 @@ export const printify = {
     const resp = await printifyFetch<PrintifyProductsResponse>(
       `/shops/${shopId}/products.json?limit=50`
     );
-    return resp.data.filter(p => p.visible && !!p.external?.id);
+    const featured = [
+      "698fa025bca977ae630b527b", // Throw Up The Dub Hoodie
+      "6989163283b74d3ce6019200", // Throw Up The Dub T-Shirt
+      "698f9d638406554f63047ba0", // WW Emblem Hoodie
+      "69891f2649f8687bb30f6535", // WW Emblem T-Shirt
+    ];
+    return resp.data
+      .filter(p => featured.includes(p.id))
+      .sort((a, b) => featured.indexOf(a.id) - featured.indexOf(b.id));
   },
 
   async getProduct(productId: string): Promise<PrintifyProduct> {

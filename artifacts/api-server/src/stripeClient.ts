@@ -4,6 +4,13 @@ import { StripeSync } from 'stripe-replit-sync';
 let stripeSync: StripeSync | null = null;
 
 async function getCredentials(): Promise<{ publishableKey: string; secretKey: string }> {
+  // Prefer plain env vars (non-Replit hosting, e.g. Render/Vercel)
+  const envSecret = process.env.STRIPE_SECRET_KEY;
+  const envPublishable = process.env.STRIPE_PUBLISHABLE_KEY;
+  if (envSecret && envPublishable) {
+    return { publishableKey: envPublishable, secretKey: envSecret };
+  }
+
   const hostname = process.env.REPLIT_CONNECTORS_HOSTNAME;
   const xReplitToken = process.env.REPL_IDENTITY
     ? 'repl ' + process.env.REPL_IDENTITY

@@ -6,7 +6,8 @@ import { getStripeSync } from "./stripeClient";
 async function initStripe() {
   const databaseUrl = process.env.DATABASE_URL;
   if (!databaseUrl) {
-    throw new Error("DATABASE_URL environment variable is required.");
+    logger.warn("DATABASE_URL not set — skipping Stripe init, checkout disabled");
+    return;
   }
 
   try {

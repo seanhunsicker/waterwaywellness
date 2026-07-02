@@ -74,6 +74,13 @@ onlyBuiltDependencies:
   - msw
   - unrs-resolver
 
+# pnpm 11 renamed the build-scripts allowlist to allowBuilds
+allowBuilds:
+  '@swc/core': true
+  esbuild: true
+  msw: true
+  unrs-resolver: true
+
 overrides:
   "@expo/ngrok-bin>@expo/ngrok-bin-darwin-arm64": "-"
   "@expo/ngrok-bin>@expo/ngrok-bin-darwin-x64": "-"

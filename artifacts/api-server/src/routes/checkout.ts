@@ -232,7 +232,8 @@ router.post("/checkout/embedded-session", async (req, res): Promise<void> => {
 
     const orderId = randomUUID();
 
-    let discountConfig: Record<string, unknown> = { allow_promotion_codes: true };
+    // No promo field inside Stripe's form — codes (incl. ZINGO) are applied via the cart
+    let discountConfig: Record<string, unknown> = {};
 
     if (promoCodeId === "ZINGO_AT_COST") {
       const discountAmount = await computeAtCostDiscount(items);

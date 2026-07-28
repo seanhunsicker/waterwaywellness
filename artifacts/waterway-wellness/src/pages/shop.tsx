@@ -42,6 +42,25 @@ function formatPrice(cents: number) {
   return `$${(cents / 100).toFixed(2)}`;
 }
 
+// Garment color names → displayable swatch colors (CSS can't parse "Ash"/"Sand"/etc.)
+const SWATCH_COLORS: Record<string, string> = {
+  white: "#ffffff",
+  black: "#151515",
+  ash: "#e8e7e1",
+  sand: "#d8cbb0",
+  "sport grey": "#9da2a3",
+  ivory: "#f5efdf",
+  seafoam: "#a4d9c5",
+};
+
+function swatchColor(title: string): string {
+  const key = title.toLowerCase();
+  if (SWATCH_COLORS[key]) return SWATCH_COLORS[key];
+  const probe = new Option().style;
+  probe.color = key;
+  return probe.color ? key : "#888888";
+}
+
 function getDefaultImage(product: PrintifyProduct, variantId?: number): string {
   if (variantId) {
     const img = product.images.find((i) => i.variant_ids.includes(variantId));
@@ -146,7 +165,7 @@ function ProductCard({ product }: { product: PrintifyProduct }) {
                       className={`w-7 h-7 rounded-full border-2 transition-all ${
                         isSelected ? "border-primary scale-110" : "border-white/20 hover:border-white/50"
                       }`}
-                      style={{ background: val.title.toLowerCase() }}
+                      style={{ background: swatchColor(val.title) }}
                     />
                   );
                 }

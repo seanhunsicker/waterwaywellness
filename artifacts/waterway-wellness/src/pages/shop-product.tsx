@@ -42,6 +42,26 @@ function formatPrice(cents: number) {
   return `$${(cents / 100).toFixed(2)}`;
 }
 
+// Garment color names → displayable swatch colors (CSS can't parse "Ash"/"Sand"/etc.)
+const SWATCH_COLORS: Record<string, string> = {
+  white: "#ffffff",
+  black: "#151515",
+  ash: "#e8e7e1",
+  sand: "#d8cbb0",
+  "sport grey": "#9da2a3",
+  ivory: "#f5efdf",
+  seafoam: "#a4d9c5",
+};
+
+function swatchColor(title: string): string {
+  const key = title.toLowerCase();
+  if (SWATCH_COLORS[key]) return SWATCH_COLORS[key];
+  // Fall back to the name itself when it's a valid CSS color, else neutral grey
+  const probe = new Option().style;
+  probe.color = key;
+  return probe.color ? key : "#888888";
+}
+
 export default function ShopProduct() {
   const { productId } = useParams<{ productId: string }>();
   // Only tracks options the user has explicitly picked
@@ -118,8 +138,12 @@ export default function ShopProduct() {
       })
     );
     if (matched) {
-      const imgIdx = images.findIndex((img) => img.variant_ids.includes(matched.id));
-      if (imgIdx >= 0) setActiveImage(imgIdx);
+      // Prefer the front-facing mockup of the matched variant
+      const candidates = images
+        .map((img, i) => ({ img, i }))
+        .filter(({ img }) => img.variant_ids.includes(matched.id));
+      const front = candidates.find(({ img }) => img.position === "front") ?? candidates[0];
+      if (front) setActiveImage(front.i);
     }
   }
 
@@ -259,7 +283,7 @@ export default function ShopProduct() {
                             className={`w-9 h-9 rounded-full border-2 transition-all ${
                               isSelected ? "border-primary scale-110 ring-2 ring-primary/30" : "border-white/20 hover:border-white/50"
                             }`}
-                            style={{ background: val.title.toLowerCase() }}
+                            style={{ background: swatchColor(val.title) }}
                           />
                         );
                       }

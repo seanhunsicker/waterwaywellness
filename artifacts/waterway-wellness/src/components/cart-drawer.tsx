@@ -36,7 +36,7 @@ export function CartDrawer() {
       if (!resp.ok || !data.valid) {
         setCodeError(data.error ?? "Invalid or expired code");
       } else {
-        setPromoCode({ id: data.id, code: data.code, percentOff: data.percentOff, amountOff: data.amountOff });
+        setPromoCode({ id: data.id, code: data.code, type: data.type, percentOff: data.percentOff, amountOff: data.amountOff });
         setCodeInput("");
         setCodeError(null);
       }

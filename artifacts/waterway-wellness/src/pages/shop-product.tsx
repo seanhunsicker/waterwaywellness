@@ -3,8 +3,9 @@ import { useQuery } from "@tanstack/react-query";
 import { useParams, Link } from "wouter";
 import { Nav } from "@/components/nav";
 import { CheckoutModal } from "@/components/checkout-modal";
+import { useCart } from "@/context/cart";
 import { motion } from "framer-motion";
-import { ChevronLeft } from "lucide-react";
+import { ChevronLeft, ShoppingCart } from "lucide-react";
 
 interface PrintifyVariant {
   id: number;
@@ -47,6 +48,7 @@ export default function ShopProduct() {
   const [selectedOptions, setSelectedOptions] = useState<Record<number, number>>({});
   const [activeImage, setActiveImage] = useState(0);
   const [checkoutItems, setCheckoutItems] = useState<Array<{ product_id: string; variant_id: number; quantity: number }> | null>(null);
+  const { addItem, openCart } = useCart();
 
   const { data, isLoading: fetching, error } = useQuery<{ data: PrintifyProduct }>({
     queryKey: ["printify-product", productId],
@@ -130,6 +132,24 @@ export default function ShopProduct() {
   function handleBuy() {
     if (!selectedVariant || !product || !allOptionsPicked) return;
     setCheckoutItems([{ product_id: product.id, variant_id: selectedVariant.id, quantity: 1 }]);
+  }
+
+  function handleAddToCart() {
+    if (!selectedVariant || !product || !allOptionsPicked) return;
+    const image =
+      images.find((img) => img.variant_ids.includes(selectedVariant.id))?.src ??
+      images.find((img) => img.is_default)?.src ??
+      images[0]?.src ??
+      "";
+    addItem({
+      product_id: product.id,
+      variant_id: selectedVariant.id,
+      title: product.title,
+      variantTitle: selectedVariant.title,
+      price: selectedVariant.price,
+      image,
+    });
+    openCart();
   }
 
   if (fetching) {
@@ -293,6 +313,14 @@ export default function ShopProduct() {
                     ? "Select a size to continue"
                     : "Select options to continue"
                   : `Buy Now — ${price}`}
+              </button>
+              <button
+                onClick={handleAddToCart}
+                disabled={!allOptionsPicked || !selectedVariant}
+                className="w-full flex items-center justify-center gap-2 border border-white/20 hover:border-primary/60 disabled:opacity-40 disabled:cursor-not-allowed text-foreground/70 hover:text-foreground font-semibold py-3.5 rounded-xl transition-all active:scale-95"
+              >
+                <ShoppingCart className="w-4 h-4" />
+                Add to Cart
               </button>
               <p className="text-center text-xs text-foreground/40">
                 Printed on demand · Ships in 5–10 business days

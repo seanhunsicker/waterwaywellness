@@ -1,6 +1,6 @@
 import { motion, useScroll, useTransform, useMotionValue, useSpring, AnimatePresence } from "framer-motion";
 import { useRef, useState, useCallback } from "react";
-import { Link } from "wouter";
+import { Link, useLocation } from "wouter";
 import { useQuery } from "@tanstack/react-query";
 import { Nav } from "@/components/nav";
 import { Footer } from "@/components/footer";
@@ -8,7 +8,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ArrowRight, ShoppingCart } from "lucide-react";
 import { CheckoutModal } from "@/components/checkout-modal";
-import { useCart } from "@/context/cart";
 import { PhotoLightbox } from "@/components/photo-lightbox";
 
 // Real community photos (served from /public/community/)
@@ -95,7 +94,7 @@ export default function Home() {
   const { scrollYProgress } = useScroll({ target: containerRef });
   const yHero = useTransform(scrollYProgress, [0, 1], ["0%", "50%"]);
   const [checkoutItems, setCheckoutItems] = useState<Array<{ product_id: string; variant_id: number; quantity: number }> | null>(null);
-  const { addItem } = useCart();
+  const [, navigate] = useLocation();
   const [lightboxPhoto, setLightboxPhoto] = useState<string | null>(null);
   const [dubParticles, setDubParticles] = useState<Array<{ id: number; x: number; emoji: string }>>([]);
 
@@ -121,24 +120,13 @@ export default function Home() {
   });
   const featuredProducts = (productsData?.data ?? []).slice(0, 4);
 
+  // Size/variant must be picked on the product page, so both actions route there
   function handleBuyProduct(item: PrintifyProduct) {
-    const defaultVariant = item.variants.find((v) => v.is_enabled && v.is_available);
-    if (!defaultVariant) return;
-    setCheckoutItems([{ product_id: item.id, variant_id: defaultVariant.id, quantity: 1 }]);
+    navigate(`/shop/${item.id}`);
   }
 
   function handleAddToCart(item: PrintifyProduct) {
-    const defaultVariant = item.variants.find((v) => v.is_enabled && v.is_available);
-    if (!defaultVariant) return;
-    const image = item.images.find((i) => i.is_default)?.src ?? item.images[0]?.src ?? "";
-    addItem({
-      product_id: item.id,
-      variant_id: defaultVariant.id,
-      title: item.title,
-      variantTitle: defaultVariant.title,
-      price: defaultVariant.price,
-      image,
-    });
+    navigate(`/shop/${item.id}`);
   }
 
   return (

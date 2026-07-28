@@ -61,6 +61,8 @@ function ProductCard({ product }: { product: PrintifyProduct }) {
   const enabledVariants = product.variants.filter((v) => v.is_enabled && v.is_available);
   const defaultVariant = enabledVariants[0];
   const activeVariant = selectedVariant ?? defaultVariant;
+  const allOptionsPicked = product.options.every((_, i) => selectedOptions[i] !== undefined);
+  const readyToBuy = allOptionsPicked && !!activeVariant;
 
   const currentImage = getDefaultImage(product, activeVariant?.id);
   const price = activeVariant ? formatPrice(activeVariant.price) : "—";
@@ -79,12 +81,12 @@ function ProductCard({ product }: { product: PrintifyProduct }) {
   }
 
   function handleBuy() {
-    if (!activeVariant) return;
+    if (!readyToBuy) return;
     setCheckoutItems([{ product_id: product.id, variant_id: activeVariant.id, quantity: 1 }]);
   }
 
   function handleAddToCart() {
-    if (!activeVariant) return;
+    if (!readyToBuy) return;
     const image = getDefaultImage(product, activeVariant.id);
     addItem({
       product_id: product.id,
@@ -133,8 +135,7 @@ function ProductCard({ product }: { product: PrintifyProduct }) {
               {option.values.map((val) => {
                 const hasVariant = enabledVariants.some((v) => v.options[optionIndex] === val.id);
                 if (!hasVariant) return null;
-                const isSelected = selectedOptions[optionIndex] === val.id ||
-                  (selectedOptions[optionIndex] === undefined && activeVariant?.options[optionIndex] === val.id);
+                const isSelected = selectedOptions[optionIndex] === val.id;
 
                 if (option.type === "color" || (option.name.toLowerCase() === "color")) {
                   return (
@@ -195,7 +196,7 @@ function ProductCard({ product }: { product: PrintifyProduct }) {
         <div className="mt-auto flex gap-2">
           <button
             onClick={handleAddToCart}
-            disabled={!activeVariant}
+            disabled={!readyToBuy}
             className="flex-1 flex items-center justify-center gap-1.5 border border-white/20 hover:border-primary/60 disabled:opacity-50 disabled:cursor-not-allowed text-foreground/70 hover:text-foreground font-semibold py-3 rounded-xl transition-all active:scale-95 text-sm"
           >
             <ShoppingCart className="w-4 h-4" />
@@ -203,10 +204,10 @@ function ProductCard({ product }: { product: PrintifyProduct }) {
           </button>
           <button
             onClick={handleBuy}
-            disabled={!activeVariant}
+            disabled={!readyToBuy}
             className="flex-1 bg-primary hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed text-primary-foreground font-bold py-3 rounded-xl transition-all active:scale-95 text-sm"
           >
-            Buy Now
+            {readyToBuy ? "Buy Now" : "Select Size"}
           </button>
         </div>
       </div>

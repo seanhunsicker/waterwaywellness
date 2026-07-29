@@ -93,7 +93,7 @@ function ProductCard({ product }: { product: PrintifyProduct }) {
     const matched = enabledVariants.find((v) =>
       product.options.every((_, i) => {
         const chosen = newOptions[i];
-        return chosen === undefined || v.options[i] === chosen;
+        return chosen === undefined || v.options.includes(chosen);
       })
     );
     if (matched) setSelectedVariant(matched);
@@ -152,7 +152,7 @@ function ProductCard({ product }: { product: PrintifyProduct }) {
             <p className="text-xs text-foreground/50 uppercase tracking-widest mb-2">{option.name}</p>
             <div className="flex flex-wrap gap-2">
               {option.values.map((val) => {
-                const hasVariant = enabledVariants.some((v) => v.options[optionIndex] === val.id);
+                const hasVariant = enabledVariants.some((v) => v.options.includes(val.id));
                 if (!hasVariant) return null;
                 const isSelected = selectedOptions[optionIndex] === val.id;
 

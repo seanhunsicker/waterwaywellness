@@ -117,7 +117,7 @@ export default function ShopProduct() {
     ? enabledVariants.find((v) =>
         product.options.every((_, i) => {
           const chosen = selectedOptions[i];
-          return chosen === undefined || v.options[i] === chosen;
+          return chosen === undefined || v.options.includes(chosen);
         })
       ) ?? null
     : null;
@@ -149,7 +149,7 @@ export default function ShopProduct() {
       )?.id;
       if (valueId === undefined) continue;
       const variantIds = product.variants
-        .filter((v) => v.options[colorOptIdx] === valueId)
+        .filter((v) => v.options.includes(valueId))
         .map((v) => v.id);
       for (const src of srcs) {
         out.push({ src, variant_ids: variantIds, is_default: false, position: "real" });
@@ -164,11 +164,11 @@ export default function ShopProduct() {
   // Which option values are still available given current selections
   function isValueAvailable(optionIndex: number, valueId: number): boolean {
     return enabledVariants.some((v) => {
-      if (v.options[optionIndex] !== valueId) return false;
+      if (!v.options.includes(valueId)) return false;
       return product!.options.every((_, i) => {
         if (i === optionIndex) return true;
         const chosen = selectedOptions[i];
-        return chosen === undefined || v.options[i] === chosen;
+        return chosen === undefined || v.options.includes(chosen);
       });
     });
   }
@@ -181,7 +181,7 @@ export default function ShopProduct() {
     const matched = enabledVariants.find((v) =>
       product!.options.every((_, i) => {
         const chosen = newOptions[i];
-        return chosen === undefined || v.options[i] === chosen;
+        return chosen === undefined || v.options.includes(chosen);
       })
     );
     if (matched) {

@@ -6,6 +6,28 @@ import { CheckoutModal } from "@/components/checkout-modal";
 import { useCart } from "@/context/cart";
 import { motion } from "framer-motion";
 import { ChevronLeft, ShoppingCart } from "lucide-react";
+import tutdBlackFront from "@assets/merch/tutd-black-front.jpg";
+import tutdBlackBack from "@assets/merch/tutd-black-back.jpg";
+import tutdBlackFront2 from "@assets/merch/tutd-black-front-2.jpg";
+import tutdIvoryFront from "@assets/merch/tutd-ivory-front.jpg";
+import tutdIvoryBack from "@assets/merch/tutd-ivory-back.jpg";
+import emblemSeafoamFront from "@assets/merch/emblem-seafoam-front.jpg";
+import emblemSeafoamBack from "@assets/merch/emblem-seafoam-back.jpg";
+import emblemSeafoamFront2 from "@assets/merch/emblem-seafoam-front-2.jpg";
+
+// Real photos of the actual merch, keyed by product id → color name.
+// Shown before the Printify mockups for the matching color.
+const REAL_PHOTOS: Record<string, Record<string, string[]>> = {
+  // Throw Up The Dub T-Shirt
+  "6989163283b74d3ce6019200": {
+    black: [tutdBlackFront, tutdBlackBack, tutdBlackFront2],
+    ivory: [tutdIvoryFront, tutdIvoryBack],
+  },
+  // WW Emblem T-Shirt
+  "69891f2649f8687bb30f6535": {
+    seafoam: [emblemSeafoamFront, emblemSeafoamBack, emblemSeafoamFront2],
+  },
+};
 
 interface PrintifyVariant {
   id: number;
@@ -111,7 +133,32 @@ export default function ShopProduct() {
     ? formatPrice(enabledVariants[0].price)
     : "—";
 
-  const images = product?.images ?? [];
+  // Prepend real merch photos (matched to their color's variants) ahead of Printify mockups
+  const realImages: PrintifyImage[] = (() => {
+    if (!product) return [];
+    const byColor = REAL_PHOTOS[product.id];
+    if (!byColor) return [];
+    const colorOptIdx = product.options.findIndex(
+      (o) => o.type === "color" || o.name.toLowerCase() === "color"
+    );
+    if (colorOptIdx < 0) return [];
+    const out: PrintifyImage[] = [];
+    for (const [colorName, srcs] of Object.entries(byColor)) {
+      const valueId = product.options[colorOptIdx].values.find(
+        (v) => v.title.toLowerCase() === colorName
+      )?.id;
+      if (valueId === undefined) continue;
+      const variantIds = product.variants
+        .filter((v) => v.options[colorOptIdx] === valueId)
+        .map((v) => v.id);
+      for (const src of srcs) {
+        out.push({ src, variant_ids: variantIds, is_default: false, position: "real" });
+      }
+    }
+    return out;
+  })();
+
+  const images = product ? [...realImages, ...product.images] : [];
   const currentImage = images[activeImage]?.src ?? images[0]?.src ?? "";
 
   // Which option values are still available given current selections
@@ -138,12 +185,15 @@ export default function ShopProduct() {
       })
     );
     if (matched) {
-      // Prefer the front-facing mockup of the matched variant
+      // Prefer a real photo of the matched color, then the front-facing mockup
       const candidates = images
         .map((img, i) => ({ img, i }))
         .filter(({ img }) => img.variant_ids.includes(matched.id));
-      const front = candidates.find(({ img }) => img.position === "front") ?? candidates[0];
-      if (front) setActiveImage(front.i);
+      const best =
+        candidates.find(({ img }) => img.position === "real") ??
+        candidates.find(({ img }) => img.position === "front") ??
+        candidates[0];
+      if (best) setActiveImage(best.i);
     }
   }
 
@@ -228,7 +278,7 @@ export default function ShopProduct() {
             </div>
             {images.length > 1 && (
               <div className="flex gap-2 overflow-x-auto pb-1 max-w-full">
-                {images.slice(0, 8).map((img, i) => (
+                {images.slice(0, 12).map((img, i) => (
                   <button
                     key={i}
                     onClick={() => setActiveImage(i)}

@@ -285,10 +285,8 @@ export default function ShopProduct() {
                 <img
                   src={currentImage}
                   alt={product.title}
-                  className={`w-full h-full ${
-                    images[activeImage]?.position === "real"
-                      ? "object-contain bg-black/30"
-                      : "object-cover"
+                  className={`w-full h-full object-cover ${
+                    images[activeImage]?.position === "real" ? "object-[center_22%]" : ""
                   }`}
                 />
               )}

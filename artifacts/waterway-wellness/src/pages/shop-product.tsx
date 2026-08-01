@@ -16,22 +16,29 @@ import emblemSeafoamBack from "@assets/merch/emblem-seafoam-back.jpg";
 import emblemSeafoamFront2 from "@assets/merch/emblem-seafoam-front-2.jpg";
 import tutdHoodieBlackBack from "@assets/merch/tutd-hoodie-black-back.jpg";
 import tutdHoodieBlackFront from "@assets/merch/tutd-hoodie-black-front.jpg";
+import tutdHoodieBlackFront2 from "@assets/merch/tutd-hoodie-black-front-2.jpg";
+import tutdBlackBack2 from "@assets/merch/tutd-black-back-2.jpg";
+import tutdBlackBack3 from "@assets/merch/tutd-black-back-3.jpg";
+import tutdWhiteBack from "@assets/merch/tutd-white-back.jpg";
+import tutdWhiteFront from "@assets/merch/tutd-white-front.jpg";
+import emblemSeafoamFront3 from "@assets/merch/emblem-seafoam-front-3.jpg";
 
 // Real photos of the actual merch, keyed by product id → color name.
 // Shown before the Printify mockups for the matching color.
 const REAL_PHOTOS: Record<string, Record<string, string[]>> = {
   // Throw Up The Dub T-Shirt
   "6989163283b74d3ce6019200": {
-    black: [tutdBlackFront, tutdBlackBack, tutdBlackFront2],
+    black: [tutdBlackFront, tutdBlackBack, tutdBlackFront2, tutdBlackBack2, tutdBlackBack3],
     ivory: [tutdIvoryFront, tutdIvoryBack],
+    white: [tutdWhiteBack, tutdWhiteFront],
   },
   // WW Emblem T-Shirt
   "69891f2649f8687bb30f6535": {
-    seafoam: [emblemSeafoamFront, emblemSeafoamBack, emblemSeafoamFront2],
+    seafoam: [emblemSeafoamFront, emblemSeafoamBack, emblemSeafoamFront2, emblemSeafoamFront3],
   },
   // Throw Up The Dub Hoodie
   "698fa025bca977ae630b527b": {
-    black: [tutdHoodieBlackBack, tutdHoodieBlackFront],
+    black: [tutdHoodieBlackBack, tutdHoodieBlackFront, tutdHoodieBlackFront2],
   },
 };
 
@@ -278,7 +285,11 @@ export default function ShopProduct() {
                 <img
                   src={currentImage}
                   alt={product.title}
-                  className="w-full h-full object-cover"
+                  className={`w-full h-full ${
+                    images[activeImage]?.position === "real"
+                      ? "object-contain bg-black/30"
+                      : "object-cover"
+                  }`}
                 />
               )}
             </div>
@@ -292,7 +303,11 @@ export default function ShopProduct() {
                       activeImage === i ? "border-primary" : "border-white/10 hover:border-white/30"
                     }`}
                   >
-                    <img src={img.src} alt="" className="w-full h-full object-cover" />
+                    <img
+                      src={img.src}
+                      alt=""
+                      className={`w-full h-full object-cover ${img.position === "real" ? "object-top" : ""}`}
+                    />
                   </button>
                 ))}
               </div>

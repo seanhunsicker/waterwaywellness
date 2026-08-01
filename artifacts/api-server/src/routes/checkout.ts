@@ -222,7 +222,9 @@ router.post("/checkout/embedded-session", async (req, res): Promise<void> => {
             product_data: {
               name: `${product.title} — ${variant.title}`,
               description: product.description?.replace(/<[^>]+>/g, "").slice(0, 500) || undefined,
-              images: image ? [`${baseUrl}${image.src}`] : [],
+              images: image
+                ? [image.src.startsWith("http") ? image.src : `${baseUrl}${image.src}`]
+                : [],
             },
           },
           quantity: item.quantity,

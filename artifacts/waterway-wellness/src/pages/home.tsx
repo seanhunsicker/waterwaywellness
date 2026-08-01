@@ -21,14 +21,20 @@ const PHOTOS = {
   movement: "/community/photo10.jpg",  // different from hero
   strip: [
     "/community/photo12.jpg",  // running action — orange bandana
+    "/community/merch1.jpg",   // merch circle from above — tees on the grass
     "/community/photo21.jpg",  // high-five tunnel at night
+    "/community/merch4.jpg",   // girls in the merch by the fence
     "/community/photo9.jpg",   // previously unused
     "/community/photo14.jpg",  // running action — orange shades
+    "/community/merch2.jpg",   // WW banner + bare feet
     "/community/photo23.jpg",  // DJ at the decks
+    "/community/merch6.jpg",   // couple in black tees
     "/community/photo11.jpg",  // previously unused
     "/community/photo13.jpg",  // yoga / sound bath purple
+    "/community/merch5.jpg",   // girls laughing in the merch
     "/community/photo15.jpg",  // throw up the dub shirt (black)
     "/community/photo16.jpg",  // Red Bull cans
+    "/community/merch3.jpg",   // merch circle from above — alt
     "/community/photo17.jpg",  // throw up the dub shirt (white)
     "/community/photo18.jpg",  // shirtless guy Laura Ward Plaza
     "/community/photo19.jpg",  // Monday crew gathering pre-run
@@ -44,7 +50,7 @@ import emblemIvory from "@assets/WaterwayWellness_Emblem_Ivory_1778376526187.png
 import throwUpDubIvory from "@assets/ThrowUpTheDub_Horizontal_Ivory_1778375686628.png";
 import throwUpDubSeafoam from "@assets/ThrowUpTheDub_Horizontal_Seafoam_1778375686628.png";
 import wRunClubSeafoam from "@assets/WaterwayWellness_WRunClub_Seafoam_1778376526186.png";
-import eventFlyer from "@assets/Location2_SOCIAL_9x16_1778380028280.png";
+import eventFlyer from "@assets/Location2_SOCIAL_9x16_web.jpg";
 import wwOutline from "@assets/WaterwayWellness_WWOutline_Seafoam_1778255372780.png";
 import { RotatingHeroBackground } from "@/components/rotating-hero-background";
 

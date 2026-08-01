@@ -5,7 +5,9 @@ import { logger } from "../lib/logger";
 const router: IRouter = Router();
 
 function proxyImageUrl(src: string): string {
-  return `/api/printify/image?url=${encodeURIComponent(src)}`;
+  // Printify mockup URLs are publicly served from their CDN — link directly
+  // (much faster than proxying every image through this server).
+  return src;
 }
 
 function rewriteProductImages(

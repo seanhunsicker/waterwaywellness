@@ -14,6 +14,8 @@ import tutdIvoryBack from "@assets/merch/tutd-ivory-back.jpg";
 import emblemSeafoamFront from "@assets/merch/emblem-seafoam-front.jpg";
 import emblemSeafoamBack from "@assets/merch/emblem-seafoam-back.jpg";
 import emblemSeafoamFront2 from "@assets/merch/emblem-seafoam-front-2.jpg";
+import tutdHoodieBlackBack from "@assets/merch/tutd-hoodie-black-back.jpg";
+import tutdHoodieBlackFront from "@assets/merch/tutd-hoodie-black-front.jpg";
 
 // Real photos of the actual merch, keyed by product id → color name.
 // Shown before the Printify mockups for the matching color.
@@ -26,6 +28,10 @@ const REAL_PHOTOS: Record<string, Record<string, string[]>> = {
   // WW Emblem T-Shirt
   "69891f2649f8687bb30f6535": {
     seafoam: [emblemSeafoamFront, emblemSeafoamBack, emblemSeafoamFront2],
+  },
+  // Throw Up The Dub Hoodie
+  "698fa025bca977ae630b527b": {
+    black: [tutdHoodieBlackBack, tutdHoodieBlackFront],
   },
 };
 

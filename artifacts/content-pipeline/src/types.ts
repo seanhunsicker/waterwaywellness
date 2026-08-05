@@ -17,6 +17,8 @@ export interface Config {
   heading: string;
   pillars: PillarDef[];
   tags: TagDef[];
+  /** Weekdays (0=Sun..6=Sat) the user plans to post. Empty = no schedule set. */
+  postDays: number[];
 }
 
 /**
@@ -44,7 +46,23 @@ export const DEFAULT_CONFIG: Config = {
     { id: "V", label: "Valuable" },
     { id: "E", label: "Entertaining" },
   ],
+  postDays: [],
 };
+
+export const PLATFORMS = [
+  { id: "tiktok", label: "TikTok", badge: "TT" },
+  { id: "instagram", label: "Instagram", badge: "IG" },
+  { id: "youtube", label: "YouTube", badge: "YT" },
+  { id: "facebook", label: "Facebook", badge: "FB" },
+  { id: "x", label: "X", badge: "X" },
+  { id: "other", label: "Other", badge: "↗" },
+] as const;
+
+export type PlatformId = (typeof PLATFORMS)[number]["id"];
+
+export function platformOf(id: string) {
+  return PLATFORMS.find((p) => p.id === id) ?? PLATFORMS[PLATFORMS.length - 1];
+}
 
 export const STATUSES = ["captured", "filmed", "posted"] as const;
 
@@ -59,6 +77,14 @@ export interface Metrics {
   updatedAt: number;
 }
 
+/** One stats reading. Kept as history so growth between checks is real data. */
+export interface Snapshot {
+  at: number;
+  views?: number;
+  likes?: number;
+  comments?: number;
+}
+
 export interface Line {
   id: string;
   text: string;
@@ -69,7 +95,11 @@ export interface Line {
   createdAt: number;
   filmedAt?: number;
   postedAt?: number;
+  /** Latest reading (mirror of the last snapshot, kept for cheap reads). */
   metrics?: Metrics;
+  snapshots?: Snapshot[];
+  postUrl?: string;
+  platform?: PlatformId;
 }
 
 export type StatusFilter = "all" | Status;

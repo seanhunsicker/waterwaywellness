@@ -13,9 +13,12 @@ interface Props {
   onUpdateTag: (id: string, changes: { label?: string }) => void;
   onAddTag: () => string | null;
   onRemoveTag: (id: string) => void;
+  onSetPostDays: (days: number[]) => void;
   onReset: () => void;
   onNotice: (msg: string) => void;
 }
+
+const WEEKDAYS = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"];
 
 const inputCls =
   "w-full rounded-[10px] border border-edge2 bg-well px-3 py-2.5 text-[14px] text-fg transition-colors focus:border-edge3";
@@ -181,6 +184,38 @@ export function Settings(props: Props) {
             <Plus size={13} aria-hidden /> Add style
           </button>
         )}
+      </div>
+
+      <div className="mb-4 rounded-[14px] border border-edge bg-card p-4">
+        <div className="eyebrow mb-1 text-mute">Posting days</div>
+        <p className="mt-0 mb-3 text-[11px] leading-relaxed text-faint">
+          Days you plan to post. On those days the pipeline shows whether you've shipped — other
+          days stay quiet. Leave all off for no schedule.
+        </p>
+        <div className="flex flex-wrap gap-1.5">
+          {WEEKDAYS.map((label, day) => {
+            const on = config.postDays.includes(day);
+            return (
+              <button
+                key={day}
+                onClick={() =>
+                  props.onSetPostDays(
+                    on ? config.postDays.filter((d) => d !== day) : [...config.postDays, day],
+                  )
+                }
+                aria-pressed={on}
+                className={cx(
+                  "h-9 w-9 cursor-pointer rounded-full border text-[12px] font-bold transition-colors",
+                  on
+                    ? "border-lime bg-lime text-ink"
+                    : "border-edge2 bg-transparent text-mute hover:text-soft",
+                )}
+              >
+                {label}
+              </button>
+            );
+          })}
+        </div>
       </div>
 
       <div className="mb-4 rounded-[14px] border border-edge bg-card p-4">

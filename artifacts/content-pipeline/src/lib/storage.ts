@@ -6,12 +6,17 @@ import {
   MAX_PILLARS,
   MAX_TAGS,
   Metrics,
+  PLATFORMS,
   PillarDef,
   STATUSES,
+  Snapshot,
   Status,
   SWATCHES,
   TagDef,
 } from "@/types";
+
+const PLATFORM_IDS = new Set<string>(PLATFORMS.map((p) => p.id));
+export const MAX_SNAPSHOTS = 60;
 
 export const STORAGE_KEY = "pipeline-lines-v2";
 export const CONFIG_KEY = "pipeline-config-v1";
@@ -22,6 +27,29 @@ const STATUS_IDS = new Set<string>(STATUSES);
 
 // Old four-tag taxonomy → current three: Learned→Valuable, Funny/Story→Entertaining.
 const LEGACY_TAG_MAP: Record<string, string> = { L: "V", F: "E", S: "E" };
+
+function coerceSnapshots(raw: unknown): Snapshot[] | undefined {
+  if (!Array.isArray(raw)) return undefined;
+  const num = (v: unknown) =>
+    typeof v === "number" && Number.isFinite(v) && v >= 0 ? Math.round(v) : undefined;
+  const out: Snapshot[] = [];
+  for (const item of raw) {
+    if (typeof item !== "object" || item === null) continue;
+    const r = item as Record<string, unknown>;
+    if (typeof r.at !== "number" || !Number.isFinite(r.at)) continue;
+    const s: Snapshot = { at: r.at };
+    const views = num(r.views);
+    const likes = num(r.likes);
+    const comments = num(r.comments);
+    if (views !== undefined) s.views = views;
+    if (likes !== undefined) s.likes = likes;
+    if (comments !== undefined) s.comments = comments;
+    if (s.views !== undefined || s.likes !== undefined || s.comments !== undefined) out.push(s);
+  }
+  if (out.length === 0) return undefined;
+  out.sort((a, b) => a.at - b.at);
+  return out.slice(-MAX_SNAPSHOTS);
+}
 
 function coerceMetrics(raw: unknown): Metrics | undefined {
   if (typeof raw !== "object" || raw === null) return undefined;
@@ -69,6 +97,23 @@ function coerceLine(raw: unknown): Line | null {
   if (typeof r.postedAt === "number") line.postedAt = r.postedAt;
   const metrics = coerceMetrics(r.metrics);
   if (metrics) line.metrics = metrics;
+  const snapshots = coerceSnapshots(r.snapshots);
+  if (snapshots) line.snapshots = snapshots;
+  // Pre-snapshot data carried only a single metrics reading — seed history from it.
+  else if (metrics) {
+    line.snapshots = [
+      {
+        at: metrics.updatedAt,
+        ...(metrics.views !== undefined && { views: metrics.views }),
+        ...(metrics.likes !== undefined && { likes: metrics.likes }),
+        ...(metrics.comments !== undefined && { comments: metrics.comments }),
+      },
+    ];
+  }
+  if (typeof r.postUrl === "string" && r.postUrl !== "") line.postUrl = r.postUrl.slice(0, 500);
+  if (typeof r.platform === "string" && PLATFORM_IDS.has(r.platform)) {
+    line.platform = r.platform as Line["platform"];
+  }
   return line;
 }
 
@@ -124,11 +169,16 @@ export function coerceConfig(raw: unknown): Config {
     }
   }
 
+  const postDays = Array.isArray(r.postDays)
+    ? [...new Set(r.postDays.filter((d): d is number => typeof d === "number" && d >= 0 && d <= 6))]
+    : [];
+
   return {
     eyebrow: label(r.eyebrow, DEFAULT_CONFIG.eyebrow),
     heading: label(r.heading, DEFAULT_CONFIG.heading),
     pillars: pillars.length > 0 ? pillars : DEFAULT_CONFIG.pillars,
     tags: tags.length > 0 ? tags : DEFAULT_CONFIG.tags,
+    postDays,
   };
 }
 

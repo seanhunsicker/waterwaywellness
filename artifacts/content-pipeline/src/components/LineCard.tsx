@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { Check, Copy, Heart, MessageCircle, Play, Plus, Undo2, X } from "lucide-react";
-import { Config, Heat, Line, Metrics, STATUSES, pillarOf, tagOf } from "@/types";
+import { Config, Heat, Line, STATUSES, pillarOf, platformOf, tagOf } from "@/types";
+import { StatsInput } from "@/hooks/useLines";
+import { detectPlatform } from "@/lib/platform";
 import { relTime } from "@/lib/time";
 import { fmtCount, parseMetric } from "@/lib/format";
 import { cx } from "@/lib/cx";
@@ -9,13 +11,14 @@ interface Props {
   config: Config;
   line: Line;
   onPatch: (id: string, changes: Partial<Line>) => void;
+  onLogStats: (id: string, input: StatsInput) => void;
   onAdvance: (id: string) => void;
   onStepBack: (id: string) => void;
   onSetHeat: (id: string, h: Heat) => void;
   onRemove: (id: string) => void;
 }
 
-export function LineCard({ config, line, onPatch, onAdvance, onStepBack, onSetHeat, onRemove }: Props) {
+export function LineCard({ config, line, onPatch, onLogStats, onAdvance, onStepBack, onSetHeat, onRemove }: Props) {
   const p = pillarOf(config, line.pillar);
   const t = tagOf(config, line.tag);
   const [editing, setEditing] = useState(false);
@@ -27,6 +30,7 @@ export function LineCard({ config, line, onPatch, onAdvance, onStepBack, onSetHe
   const [mViews, setMViews] = useState("");
   const [mLikes, setMLikes] = useState("");
   const [mComments, setMComments] = useState("");
+  const [mUrl, setMUrl] = useState("");
 
   const startEdit = () => {
     setValue(line.text);
@@ -62,27 +66,28 @@ export function LineCard({ config, line, onPatch, onAdvance, onStepBack, onSetHe
     setMViews(line.metrics?.views !== undefined ? String(line.metrics.views) : "");
     setMLikes(line.metrics?.likes !== undefined ? String(line.metrics.likes) : "");
     setMComments(line.metrics?.comments !== undefined ? String(line.metrics.comments) : "");
+    setMUrl(line.postUrl ?? "");
     setStatsOpen(true);
   };
 
   const saveStats = () => {
     setStatsOpen(false);
-    const views = parseMetric(mViews);
-    const likes = parseMetric(mLikes);
-    const comments = parseMetric(mComments);
-    if (views === undefined && likes === undefined && comments === undefined) {
-      if (line.metrics) onPatch(line.id, { metrics: undefined });
-      return;
-    }
-    const metrics: Metrics = { updatedAt: Date.now() };
-    if (views !== undefined) metrics.views = views;
-    if (likes !== undefined) metrics.likes = likes;
-    if (comments !== undefined) metrics.comments = comments;
-    onPatch(line.id, { metrics });
+    onLogStats(line.id, {
+      views: parseMetric(mViews),
+      likes: parseMetric(mLikes),
+      comments: parseMetric(mComments),
+      url: mUrl,
+    });
   };
 
   const prevStatus = STATUSES[Math.max(0, STATUSES.indexOf(line.status) - 1)];
   const m = line.metrics;
+  const snaps = line.snapshots ?? [];
+  const prevSnap = snaps.length >= 2 ? snaps[snaps.length - 2] : null;
+  const viewsDelta =
+    prevSnap && m?.views !== undefined && prevSnap.views !== undefined
+      ? m.views - prevSnap.views
+      : null;
 
   return (
     <div
@@ -243,73 +248,115 @@ export function LineCard({ config, line, onPatch, onAdvance, onStepBack, onSetHe
       {line.status === "posted" && (
         <div className="mt-3 border-t border-edge pt-2.5">
           {statsOpen ? (
-            <div className="flex flex-wrap items-end gap-2">
-              {(
-                [
-                  ["Views", mViews, setMViews],
-                  ["Likes", mLikes, setMLikes],
-                  ["Comments", mComments, setMComments],
-                ] as const
-              ).map(([lab, val, set]) => (
-                <label key={lab} className="flex min-w-0 flex-1 basis-16 flex-col gap-1">
-                  <span className="eyebrow text-[9px] tracking-[0.12em] text-dim">{lab}</span>
-                  <input
-                    value={val}
-                    onChange={(e) => set(e.target.value)}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter") saveStats();
-                      if (e.key === "Escape") setStatsOpen(false);
-                    }}
-                    inputMode="numeric"
-                    placeholder="—"
-                    className="w-full rounded-[8px] border border-edge2 bg-well px-2 py-1.5 text-[13px] text-fg tabular-nums"
-                  />
-                </label>
-              ))}
-              <span className="flex gap-1.5">
-                <button
-                  onClick={() => setStatsOpen(false)}
-                  className="cursor-pointer rounded-full border border-edge2 bg-transparent px-3 py-1.5 text-[11px] font-semibold text-mute"
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={saveStats}
-                  className="cursor-pointer rounded-full border-none bg-lime px-3 py-1.5 text-[11px] font-extrabold text-ink"
-                >
-                  Save
-                </button>
-              </span>
+            <div>
+              <label className="mb-2 flex flex-col gap-1">
+                <span className="eyebrow text-[9px] tracking-[0.12em] text-dim">
+                  Post link{mUrl.trim() ? ` · ${platformOf(detectPlatform(mUrl)).label}` : ""}
+                </span>
+                <input
+                  value={mUrl}
+                  onChange={(e) => setMUrl(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") saveStats();
+                    if (e.key === "Escape") setStatsOpen(false);
+                  }}
+                  inputMode="url"
+                  placeholder="Paste the TikTok / IG / YouTube link"
+                  className="w-full rounded-[8px] border border-edge2 bg-well px-2 py-1.5 text-[13px] text-fg"
+                />
+              </label>
+              <div className="flex flex-wrap items-end gap-2">
+                {(
+                  [
+                    ["Views", mViews, setMViews],
+                    ["Likes", mLikes, setMLikes],
+                    ["Comments", mComments, setMComments],
+                  ] as const
+                ).map(([lab, val, set]) => (
+                  <label key={lab} className="flex min-w-0 flex-1 basis-16 flex-col gap-1">
+                    <span className="eyebrow text-[9px] tracking-[0.12em] text-dim">{lab}</span>
+                    <input
+                      value={val}
+                      onChange={(e) => set(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") saveStats();
+                        if (e.key === "Escape") setStatsOpen(false);
+                      }}
+                      inputMode="numeric"
+                      placeholder="—"
+                      className="w-full rounded-[8px] border border-edge2 bg-well px-2 py-1.5 text-[13px] text-fg tabular-nums"
+                    />
+                  </label>
+                ))}
+                <span className="flex gap-1.5">
+                  <button
+                    onClick={() => setStatsOpen(false)}
+                    className="cursor-pointer rounded-full border border-edge2 bg-transparent px-3 py-1.5 text-[11px] font-semibold text-mute"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={saveStats}
+                    className="cursor-pointer rounded-full border-none bg-lime px-3 py-1.5 text-[11px] font-extrabold text-ink"
+                  >
+                    Save
+                  </button>
+                </span>
+              </div>
             </div>
-          ) : m ? (
-            <button
-              onClick={openStats}
-              title="Edit stats"
-              className="flex cursor-pointer items-center gap-3 rounded-md border-none bg-transparent p-0 text-[12px] text-soft"
-            >
-              {m.views !== undefined && (
-                <span className="flex items-center gap-1">
-                  <Play size={11} aria-hidden className="text-dim" />
-                  <span className="font-semibold tabular-nums">{fmtCount(m.views)}</span>
-                  <span className="sr-only">views</span>
-                </span>
+          ) : m || line.postUrl ? (
+            <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5 text-[12px] text-soft">
+              {line.postUrl && (
+                <a
+                  href={line.postUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  title={`Open on ${platformOf(line.platform ?? "other").label}`}
+                  className="rounded-[5px] border border-edge2 px-1.5 py-0.5 font-narrow text-[10px] font-semibold tracking-[0.08em] text-soft no-underline transition-colors hover:border-edge3 hover:text-fg"
+                >
+                  {platformOf(line.platform ?? "other").badge} ↗
+                </a>
               )}
-              {m.likes !== undefined && (
-                <span className="flex items-center gap-1">
-                  <Heart size={11} aria-hidden className="text-dim" />
-                  <span className="font-semibold tabular-nums">{fmtCount(m.likes)}</span>
-                  <span className="sr-only">likes</span>
-                </span>
-              )}
-              {m.comments !== undefined && (
-                <span className="flex items-center gap-1">
-                  <MessageCircle size={11} aria-hidden className="text-dim" />
-                  <span className="font-semibold tabular-nums">{fmtCount(m.comments)}</span>
-                  <span className="sr-only">comments</span>
-                </span>
-              )}
-              <span className="text-[10px] text-faint">edit</span>
-            </button>
+              <button
+                onClick={openStats}
+                title="Update stats"
+                className="flex cursor-pointer flex-wrap items-center gap-3 rounded-md border-none bg-transparent p-0 text-[12px] text-soft"
+              >
+                {m?.views !== undefined && (
+                  <span className="flex items-center gap-1">
+                    <Play size={11} aria-hidden className="text-dim" />
+                    <span className="font-semibold tabular-nums">{fmtCount(m.views)}</span>
+                    <span className="sr-only">views</span>
+                  </span>
+                )}
+                {viewsDelta !== null && viewsDelta !== 0 && (
+                  <span
+                    className={cx(
+                      "text-[10px] font-bold tabular-nums",
+                      viewsDelta > 0 ? "text-lime" : "text-ember",
+                    )}
+                    title={`Since last check (${relTime(prevSnap!.at)} ago)`}
+                  >
+                    {viewsDelta > 0 ? "▲" : "▼"} {fmtCount(Math.abs(viewsDelta))}
+                  </span>
+                )}
+                {m?.likes !== undefined && (
+                  <span className="flex items-center gap-1">
+                    <Heart size={11} aria-hidden className="text-dim" />
+                    <span className="font-semibold tabular-nums">{fmtCount(m.likes)}</span>
+                    <span className="sr-only">likes</span>
+                  </span>
+                )}
+                {m?.comments !== undefined && (
+                  <span className="flex items-center gap-1">
+                    <MessageCircle size={11} aria-hidden className="text-dim" />
+                    <span className="font-semibold tabular-nums">{fmtCount(m.comments)}</span>
+                    <span className="sr-only">comments</span>
+                  </span>
+                )}
+                <span className="text-[10px] text-faint">{m ? "update" : "add stats"}</span>
+              </button>
+            </div>
           ) : (
             <button
               onClick={openStats}

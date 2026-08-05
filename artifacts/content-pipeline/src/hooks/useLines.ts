@@ -1,6 +1,15 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Heat, Line, PillarId, STATUSES, Status, TagId } from "@/types";
-import { STORAGE_KEY, loadLines, mergeLines, newId, saveLines } from "@/lib/storage";
+import { Heat, Line, Metrics, PillarId, STATUSES, Snapshot, Status, TagId } from "@/types";
+import { MAX_SNAPSHOTS, STORAGE_KEY, loadLines, mergeLines, newId, saveLines } from "@/lib/storage";
+import { detectPlatform, normalizeUrl } from "@/lib/platform";
+
+export interface StatsInput {
+  views?: number;
+  likes?: number;
+  comments?: number;
+  /** Raw url field text; empty string clears the link. Omit to leave untouched. */
+  url?: string;
+}
 
 export interface UndoState {
   label: string;
@@ -108,6 +117,57 @@ export function useLines() {
     [persist],
   );
 
+  const logStats = useCallback(
+    (id: string, input: StatsInput) => {
+      persist(
+        linesRef.current.map((l) => {
+          if (l.id !== id) return l;
+          const next: Line = { ...l };
+          const now = Date.now();
+
+          const hasNumbers =
+            input.views !== undefined || input.likes !== undefined || input.comments !== undefined;
+          if (hasNumbers) {
+            const m: Metrics = { updatedAt: now };
+            if (input.views !== undefined) m.views = input.views;
+            if (input.likes !== undefined) m.likes = input.likes;
+            if (input.comments !== undefined) m.comments = input.comments;
+            next.metrics = m;
+            const prev = l.metrics;
+            const changed =
+              !prev ||
+              prev.views !== m.views ||
+              prev.likes !== m.likes ||
+              prev.comments !== m.comments;
+            if (changed) {
+              const snap: Snapshot = { at: now };
+              if (m.views !== undefined) snap.views = m.views;
+              if (m.likes !== undefined) snap.likes = m.likes;
+              if (m.comments !== undefined) snap.comments = m.comments;
+              next.snapshots = [...(l.snapshots ?? []), snap].slice(-MAX_SNAPSHOTS);
+            }
+          } else {
+            delete next.metrics;
+            delete next.snapshots;
+          }
+
+          if (input.url !== undefined) {
+            const url = normalizeUrl(input.url);
+            if (url) {
+              next.postUrl = url;
+              next.platform = detectPlatform(url);
+            } else {
+              delete next.postUrl;
+              delete next.platform;
+            }
+          }
+          return next;
+        }),
+      );
+    },
+    [persist],
+  );
+
   const remove = useCallback(
     (id: string) => {
       withUndo("Line deleted", linesRef.current.filter((l) => l.id !== id));
@@ -140,6 +200,7 @@ export function useLines() {
     advance,
     stepBack,
     setHeat,
+    logStats,
     remove,
     importLines,
     undo,

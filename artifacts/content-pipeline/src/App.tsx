@@ -15,6 +15,7 @@ import { UndoToast } from "@/components/UndoToast";
 import { DataMenu } from "@/components/DataMenu";
 import { Insights } from "@/components/Insights";
 import { Settings } from "@/components/Settings";
+import { PostingDayBanner } from "@/components/PostingDayBanner";
 
 interface Notice {
   msg: string;
@@ -35,6 +36,7 @@ export default function App() {
     advance,
     stepBack,
     setHeat,
+    logStats,
     remove,
     importLines,
     undo,
@@ -180,6 +182,7 @@ export default function App() {
             onUpdateTag={configApi.updateTag}
             onAddTag={configApi.addTag}
             onRemoveTag={configApi.removeTag}
+            onSetPostDays={configApi.setPostDays}
             onReset={configApi.resetConfig}
             onNotice={showNotice}
           />
@@ -188,6 +191,7 @@ export default function App() {
         ) : (
           <>
             <CaptureCard config={config} onAdd={add} />
+            <PostingDayBanner config={config} lines={lines} />
             <StatsStrip lines={lines} />
             <PillarBalance
               config={config}
@@ -234,6 +238,7 @@ export default function App() {
                   config={config}
                   line={l}
                   onPatch={patch}
+                  onLogStats={logStats}
                   onAdvance={advance}
                   onStepBack={stepBack}
                   onSetHeat={setHeat}

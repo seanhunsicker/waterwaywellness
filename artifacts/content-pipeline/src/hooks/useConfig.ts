@@ -83,6 +83,13 @@ export function useConfig() {
     [persist],
   );
 
+  const setPostDays = useCallback(
+    (days: number[]) => {
+      persist({ ...configRef.current, postDays: [...new Set(days)].sort() });
+    },
+    [persist],
+  );
+
   const resetConfig = useCallback(() => {
     persist(DEFAULT_CONFIG);
   }, [persist]);
@@ -103,6 +110,7 @@ export function useConfig() {
     updateTag,
     addTag,
     removeTag,
+    setPostDays,
     resetConfig,
     replaceConfig,
   };

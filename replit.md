@@ -34,7 +34,7 @@ _Populate as you build — non-obvious choices a reader couldn't infer from the 
 
 ## Product
 
-- **Content Pipeline** (`artifacts/content-pipeline`): one-line-a-day content capture tool. Lines are tagged with a pillar (Golf/Training/Learning/Crew/Ideas) and a hook type (Learned/Funny/Relatable/Story), rated for heat, and moved captured → filmed → posted. Includes capture streak + trailing-7-day stats, "film this next" queue, posted-by-pillar balance with least-fed nudge, search/filter/sort, inline edit, undo, and JSON export/import. All data stays on-device (localStorage, key `pipeline-lines-v2`; migrates the old mockup's `pipeline-lines` key).
+- **Content Pipeline** (`artifacts/content-pipeline`): one-line-a-day content capture tool. Lines are tagged with a pillar (Golf/Training/Learning/Crew/Ideas) and a hook type (Relatable/Valuable/Entertaining), rated for heat, and moved captured → filmed → posted. Includes capture streak + trailing-7-day stats, "film this next" queue, posted-by-pillar balance with least-fed nudge, search/filter/sort, inline edit, undo, and JSON export/import. All data stays on-device (localStorage, key `pipeline-lines-v2`; migrates the old mockup's `pipeline-lines` key).
 
 ## User preferences
 

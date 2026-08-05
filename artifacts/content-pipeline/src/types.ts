@@ -9,10 +9,9 @@ export const PILLARS = [
 export type PillarId = (typeof PILLARS)[number]["id"];
 
 export const TAGS = [
-  { id: "L", label: "Learned" },
-  { id: "F", label: "Funny" },
   { id: "R", label: "Relatable" },
-  { id: "S", label: "Story" },
+  { id: "V", label: "Valuable" },
+  { id: "E", label: "Entertaining" },
 ] as const;
 
 export type TagId = (typeof TAGS)[number]["id"];

@@ -8,6 +8,9 @@ const PILLAR_IDS = new Set<string>(PILLARS.map((p) => p.id));
 const TAG_IDS = new Set<string>(TAGS.map((t) => t.id));
 const STATUS_IDS = new Set<string>(STATUSES);
 
+// Old four-tag taxonomy → current three: Learned→Valuable, Funny/Story→Entertaining.
+const LEGACY_TAG_MAP: Record<string, TagId> = { L: "V", F: "E", S: "E" };
+
 function coerceLine(raw: unknown): Line | null {
   if (typeof raw !== "object" || raw === null) return null;
   const r = raw as Record<string, unknown>;
@@ -16,7 +19,10 @@ function coerceLine(raw: unknown): Line | null {
   const pillar = (
     typeof r.pillar === "string" && PILLAR_IDS.has(r.pillar) ? r.pillar : "ideas"
   ) as PillarId;
-  const tag = (typeof r.tag === "string" && TAG_IDS.has(r.tag) ? r.tag : "L") as TagId;
+  const tag: TagId =
+    typeof r.tag === "string" && TAG_IDS.has(r.tag)
+      ? (r.tag as TagId)
+      : (typeof r.tag === "string" && LEGACY_TAG_MAP[r.tag]) || "R";
   const status = (
     typeof r.status === "string" && STATUS_IDS.has(r.status) ? r.status : "captured"
   ) as Status;

@@ -9,7 +9,7 @@ interface Props {
 export function CaptureCard({ onAdd }: Props) {
   const [draft, setDraft] = useState("");
   const [pillar, setPillar] = useState<PillarId>("golf");
-  const [tag, setTag] = useState<TagId>("L");
+  const [tag, setTag] = useState<TagId>("R");
   const inputRef = useRef<HTMLInputElement>(null);
 
   const submit = () => {

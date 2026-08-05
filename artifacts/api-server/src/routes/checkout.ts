@@ -126,20 +126,28 @@ router.get("/checkout/validate-coupon", async (req, res): Promise<void> => {
   }
   try {
     const stripe = await getUncachableStripeClient();
-    const promoCodes = await stripe.promotionCodes.list({ code, active: true, limit: 1 });
+    // Stripe API 2025-09-30.clover moved the coupon under promotion.coupon,
+    // returned as an id unless expanded.
+    const promoCodes = await stripe.promotionCodes.list({
+      code,
+      active: true,
+      limit: 1,
+      expand: ["data.promotion.coupon"],
+    });
     if (promoCodes.data.length === 0) {
       res.json({ valid: false, error: "Invalid or expired code" });
       return;
     }
     const promo = promoCodes.data[0];
-    const coupon = promo.coupon;
+    const rawCoupon = promo.promotion.coupon;
+    const coupon = rawCoupon && typeof rawCoupon === "object" ? rawCoupon : null;
     res.json({
       valid: true,
       id: promo.id,
       code: promo.code,
       type: "standard",
-      percentOff: coupon.percent_off ?? null,
-      amountOff: coupon.amount_off ?? null,
+      percentOff: coupon?.percent_off ?? null,
+      amountOff: coupon?.amount_off ?? null,
     });
   } catch (err: any) {
     req.log.error({ err }, "Failed to validate coupon");

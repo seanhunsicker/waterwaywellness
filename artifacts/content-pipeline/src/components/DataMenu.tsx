@@ -1,19 +1,21 @@
 import { useRef } from "react";
-import { Line, STATUSES, pillarOf, tagOf } from "@/types";
-import { exportJson, parseImport } from "@/lib/storage";
+import { Config, Line, STATUSES, pillarOf, tagOf } from "@/types";
+import { ImportPayload, exportJson, parseImport } from "@/lib/storage";
 import { dayKey } from "@/lib/time";
+import { fmtCount } from "@/lib/format";
 
 interface Props {
   lines: Line[];
-  onImport: (lines: Line[]) => number;
+  config: Config;
+  onImport: (payload: ImportPayload) => { addedLines: number; addedConfig: number };
   onNotice: (msg: string) => void;
 }
 
-export function DataMenu({ lines, onImport, onNotice }: Props) {
+export function DataMenu({ lines, config, onImport, onNotice }: Props) {
   const fileRef = useRef<HTMLInputElement>(null);
 
   const download = () => {
-    const blob = new Blob([exportJson(lines)], { type: "application/json" });
+    const blob = new Blob([exportJson(lines, config)], { type: "application/json" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
@@ -27,13 +29,19 @@ export function DataMenu({ lines, onImport, onNotice }: Props) {
   const onFile = async (file: File | undefined) => {
     if (!file) return;
     try {
-      const imported = parseImport(await file.text());
-      if (imported.length === 0) {
+      const payload = parseImport(await file.text());
+      if (payload.lines.length === 0 && !payload.config) {
         onNotice("No lines found in that file");
         return;
       }
-      const added = onImport(imported);
-      if (added === 0) onNotice("Nothing new — all those lines are already here");
+      const { addedLines, addedConfig } = onImport(payload);
+      if (addedLines === 0) {
+        onNotice(
+          addedConfig > 0
+            ? `Added ${addedConfig} pillar${addedConfig === 1 ? "" : "s"}/styles from file`
+            : "Nothing new — all those lines are already here",
+        );
+      }
     } catch {
       onNotice("Couldn't read that file");
     } finally {
@@ -45,9 +53,11 @@ export function DataMenu({ lines, onImport, onNotice }: Props) {
     const blocks = STATUSES.map((s) => {
       const group = lines.filter((l) => l.status === s);
       if (group.length === 0) return null;
-      const rows = group.map(
-        (l) => `- [${pillarOf(l.pillar).label} / ${tagOf(l.tag).label}] ${l.text}`,
-      );
+      const rows = group.map((l) => {
+        const views =
+          l.metrics?.views !== undefined ? ` (${fmtCount(l.metrics.views)} views)` : "";
+        return `- [${pillarOf(config, l.pillar).label} / ${tagOf(config, l.tag).label}] ${l.text}${views}`;
+      });
       return `${s.toUpperCase()}\n${rows.join("\n")}`;
     }).filter(Boolean);
     try {

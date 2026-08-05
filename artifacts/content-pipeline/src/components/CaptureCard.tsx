@@ -1,16 +1,25 @@
-import { useRef, useState } from "react";
-import { PILLARS, PillarId, TAGS, TagId } from "@/types";
+import { useEffect, useRef, useState } from "react";
+import { Config, PillarId, TagId } from "@/types";
 import { cx } from "@/lib/cx";
 
 interface Props {
+  config: Config;
   onAdd: (text: string, pillar: PillarId, tag: TagId) => void;
 }
 
-export function CaptureCard({ onAdd }: Props) {
+export function CaptureCard({ config, onAdd }: Props) {
   const [draft, setDraft] = useState("");
-  const [pillar, setPillar] = useState<PillarId>("golf");
-  const [tag, setTag] = useState<TagId>("R");
+  const [pillar, setPillar] = useState<PillarId>(config.pillars[0].id);
+  const [tag, setTag] = useState<TagId>(config.tags[0].id);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  // Keep selections valid when pillars/tags are edited in Settings.
+  useEffect(() => {
+    if (!config.pillars.some((p) => p.id === pillar)) setPillar(config.pillars[0].id);
+  }, [config.pillars, pillar]);
+  useEffect(() => {
+    if (!config.tags.some((t) => t.id === tag)) setTag(config.tags[0].id);
+  }, [config.tags, tag]);
 
   const submit = () => {
     if (!draft.trim()) return;
@@ -35,7 +44,7 @@ export function CaptureCard({ onAdd }: Props) {
         }}
       />
       <div className="mb-2 flex flex-wrap gap-2">
-        {PILLARS.map((p) => (
+        {config.pillars.map((p) => (
           <button
             key={p.id}
             onClick={() => setPillar(p.id)}
@@ -51,7 +60,7 @@ export function CaptureCard({ onAdd }: Props) {
         ))}
       </div>
       <div className="flex flex-wrap items-center gap-2">
-        {TAGS.map((t) => (
+        {config.tags.map((t) => (
           <button
             key={t.id}
             onClick={() => setTag(t.id)}

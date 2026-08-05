@@ -1,15 +1,16 @@
-import { Line, PILLARS, PillarId } from "@/types";
+import { Config, Line, PillarId } from "@/types";
 import { cx } from "@/lib/cx";
 
 interface Props {
+  config: Config;
   lines: Line[];
   active: PillarId | null;
   onToggle: (id: PillarId) => void;
 }
 
-export function PillarBalance({ lines, active, onToggle }: Props) {
+export function PillarBalance({ config, lines, active, onToggle }: Props) {
   const posted = lines.filter((l) => l.status === "posted");
-  const counts = PILLARS.map((p) => ({
+  const counts = config.pillars.map((p) => ({
     ...p,
     total: posted.filter((l) => l.pillar === p.id).length,
   }));
@@ -18,7 +19,7 @@ export function PillarBalance({ lines, active, onToggle }: Props) {
   // Nudge toward the most-neglected pillar once there's enough signal.
   const least = [...counts].sort((a, b) => a.total - b.total)[0];
   const gap = Math.max(...counts.map((c) => c.total)) - least.total;
-  const showNudge = posted.length >= 3 && gap >= 2;
+  const showNudge = posted.length >= 3 && gap >= 2 && counts.length > 1;
 
   return (
     <div className="mb-4 rounded-[14px] border border-edge bg-card p-4">
@@ -39,7 +40,7 @@ export function PillarBalance({ lines, active, onToggle }: Props) {
               dimmed && "opacity-40",
             )}
           >
-            <span className="w-[74px] shrink-0 font-narrow text-[13px] font-semibold text-soft">
+            <span className="w-[74px] shrink-0 truncate font-narrow text-[13px] font-semibold text-soft">
               {c.label}
             </span>
             <span className="h-2 flex-1 overflow-hidden rounded-[4px] bg-well">

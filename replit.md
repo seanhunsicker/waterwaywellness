@@ -34,7 +34,7 @@ _Populate as you build — non-obvious choices a reader couldn't infer from the 
 
 ## Product
 
-- **Content Pipeline** (`artifacts/content-pipeline`): one-line-a-day content capture tool. Lines are tagged with a pillar (Golf/Training/Learning/Crew/Ideas) and a hook type (Relatable/Valuable/Entertaining), rated for heat, and moved captured → filmed → posted. Includes capture streak + trailing-7-day stats, "film this next" queue, posted-by-pillar balance with least-fed nudge, search/filter/sort, inline edit, undo, and JSON export/import. All data stays on-device (localStorage, key `pipeline-lines-v2`; migrates the old mockup's `pipeline-lines` key).
+- **Content Pipeline** (`artifacts/content-pipeline`): one-line-a-day content capture tool. Lines are tagged with a pillar and a hook style, rated for heat, and moved captured → filmed → posted. Pillars (max 5 — the tint library is capped by colorblind-safe separation on the dark surface), hook styles, and the app heading are all user-editable in Settings (config key `pipeline-config-v1`; defaults: Golf/Training/Learning/Crew/Ideas × Relatable/Valuable/Entertaining). Posted lines take view/like/comment stats, and an Insights view shows top posts plus average views by pillar and by style. Also: capture streak + trailing-7-day stats, "film this next" queue, posted-by-pillar balance with least-fed nudge, search/filter/sort (new/hot/top), inline edit incl. pillar/style reassignment, undo, JSON export/import (v3 bundles config). All data stays on-device (localStorage, key `pipeline-lines-v2`; migrates the old mockup's `pipeline-lines` key). Deployed for the user as a Claude artifact (single-file bundle assembled from dist with fonts + apple-touch-icon inlined).
 
 ## User preferences
 

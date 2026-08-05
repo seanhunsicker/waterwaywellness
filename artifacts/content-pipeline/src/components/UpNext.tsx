@@ -1,13 +1,14 @@
-import { Line, pillarOf } from "@/types";
+import { Config, Line, pillarOf } from "@/types";
 
 interface Props {
+  config: Config;
   line: Line;
   onFilm: (id: string) => void;
 }
 
 /** Surfaces the hottest un-filmed line so "what do I shoot?" has an answer. */
-export function UpNext({ line, onFilm }: Props) {
-  const p = pillarOf(line.pillar);
+export function UpNext({ config, line, onFilm }: Props) {
+  const p = pillarOf(config, line.pillar);
   return (
     <div
       className="mb-4 flex items-center gap-3 rounded-[4px_14px_14px_4px] border border-ember/25 bg-ember/[0.07] py-3 pr-3 pl-4"

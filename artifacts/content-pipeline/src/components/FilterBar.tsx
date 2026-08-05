@@ -82,7 +82,7 @@ export function FilterBar({ filter, onFilter, query, onQuery, sort, onSort, coun
           role="group"
           aria-label="Sort order"
         >
-          {(["new", "hot"] as SortMode[]).map((s) => (
+          {(["new", "hot", "top"] as SortMode[]).map((s) => (
             <button
               key={s}
               onClick={() => onSort(s)}

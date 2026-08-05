@@ -187,6 +187,26 @@ export function newId(): string {
   return `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
 }
 
+// Same-tab data events: "saved" fires on every normal persist (cloud sync
+// listens to schedule a push); "replaced" fires when a cloud merge rewrites
+// storage wholesale (state hooks listen and reload).
+const SAVED_EVENT = "pipeline-data-saved";
+const REPLACED_EVENT = "pipeline-data-replaced";
+
+export function onDataSaved(cb: () => void): () => void {
+  window.addEventListener(SAVED_EVENT, cb);
+  return () => window.removeEventListener(SAVED_EVENT, cb);
+}
+
+export function onDataReplaced(cb: () => void): () => void {
+  window.addEventListener(REPLACED_EVENT, cb);
+  return () => window.removeEventListener(REPLACED_EVENT, cb);
+}
+
+export function emitDataReplaced(): void {
+  window.dispatchEvent(new Event(REPLACED_EVENT));
+}
+
 export function loadLines(): Line[] {
   try {
     const v2 = localStorage.getItem(STORAGE_KEY);
@@ -203,9 +223,10 @@ export function loadLines(): Line[] {
   return [];
 }
 
-export function saveLines(lines: Line[]): void {
+export function saveLines(lines: Line[], opts?: { silent?: boolean }): void {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(lines));
+    if (!opts?.silent) window.dispatchEvent(new Event(SAVED_EVENT));
   } catch (e) {
     console.error("Could not save lines", e);
   }
@@ -221,9 +242,10 @@ export function loadConfig(): Config {
   return DEFAULT_CONFIG;
 }
 
-export function saveConfig(config: Config): void {
+export function saveConfig(config: Config, opts?: { silent?: boolean }): void {
   try {
     localStorage.setItem(CONFIG_KEY, JSON.stringify(config));
+    if (!opts?.silent) window.dispatchEvent(new Event(SAVED_EVENT));
   } catch (e) {
     console.error("Could not save config", e);
   }

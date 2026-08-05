@@ -1,6 +1,14 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Heat, Line, Metrics, PillarId, STATUSES, Snapshot, Status, TagId } from "@/types";
-import { MAX_SNAPSHOTS, STORAGE_KEY, loadLines, mergeLines, newId, saveLines } from "@/lib/storage";
+import {
+  MAX_SNAPSHOTS,
+  STORAGE_KEY,
+  loadLines,
+  mergeLines,
+  newId,
+  onDataReplaced,
+  saveLines,
+} from "@/lib/storage";
 import { detectPlatform, normalizeUrl } from "@/lib/platform";
 
 export interface StatsInput {
@@ -28,13 +36,18 @@ export function useLines() {
     saveLines(next);
   }, []);
 
-  // Keep tabs in sync — the storage event only fires in *other* tabs.
+  // Keep tabs in sync — the storage event only fires in *other* tabs —
+  // and reload after a cloud merge rewrites storage in this tab.
   useEffect(() => {
     const onStorage = (e: StorageEvent) => {
       if (e.key === STORAGE_KEY) setLines(loadLines());
     };
     window.addEventListener("storage", onStorage);
-    return () => window.removeEventListener("storage", onStorage);
+    const offReplaced = onDataReplaced(() => setLines(loadLines()));
+    return () => {
+      window.removeEventListener("storage", onStorage);
+      offReplaced();
+    };
   }, []);
 
   const withUndo = useCallback(

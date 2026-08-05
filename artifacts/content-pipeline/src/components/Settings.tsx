@@ -1,11 +1,14 @@
 import { useState } from "react";
 import { Plus, X } from "lucide-react";
 import { Config, Line, MAX_PILLARS, MAX_TAGS, SWATCHES } from "@/types";
+import { CloudApi } from "@/hooks/useCloud";
+import { relTime } from "@/lib/time";
 import { cx } from "@/lib/cx";
 
 interface Props {
   config: Config;
   lines: Line[];
+  cloud: CloudApi;
   onBrand: (changes: Partial<Pick<Config, "eyebrow" | "heading">>) => void;
   onUpdatePillar: (id: string, changes: { label?: string; tint?: string }) => void;
   onAddPillar: () => string | null;
@@ -22,6 +25,132 @@ const WEEKDAYS = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"];
 
 const inputCls =
   "w-full rounded-[10px] border border-edge2 bg-well px-3 py-2.5 text-[14px] text-fg transition-colors focus:border-edge3";
+
+function AccountCard({ cloud }: { cloud: CloudApi }) {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [msg, setMsg] = useState<string | null>(null);
+
+  const run = async (fn: (e: string, p: string) => Promise<string | null>) => {
+    if (!email.trim() || !password) {
+      setMsg("Enter your email and password.");
+      return;
+    }
+    setBusy(true);
+    setMsg(null);
+    const err = await fn(email.trim(), password);
+    setBusy(false);
+    setMsg(err);
+    if (!err) setPassword("");
+  };
+
+  const statusLabel =
+    cloud.status === "syncing"
+      ? "Syncing…"
+      : cloud.status === "synced"
+        ? `Synced${cloud.lastSyncAt ? ` · ${relTime(cloud.lastSyncAt)} ago` : ""}`
+        : cloud.status === "unavailable"
+          ? "Sync unavailable here — open your deployed app"
+          : cloud.status === "error"
+            ? "Sync hit an error — it retries on your next change"
+            : "";
+
+  if (!cloud.configured) {
+    return (
+      <div className="mb-4 rounded-[14px] border border-edge bg-card p-4">
+        <div className="eyebrow mb-1 text-mute">Account & sync</div>
+        <p className="mt-0 mb-0 text-[12px] leading-relaxed text-dim">
+          This copy runs local-only — your lines stay on this device. Sign-in and cross-device
+          sync live in the deployed app.
+        </p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="mb-4 rounded-[14px] border border-edge bg-card p-4">
+      <div className="eyebrow mb-1 text-mute">Account & sync</div>
+      {cloud.user ? (
+        <div>
+          <div className="mb-1 text-[14px] text-fg">{cloud.user.email}</div>
+          <div className="mb-3 flex items-center gap-1.5 text-[11px] text-dim">
+            <span
+              aria-hidden
+              className="h-1.5 w-1.5 rounded-full"
+              style={{
+                background:
+                  cloud.status === "synced"
+                    ? "var(--color-lime)"
+                    : cloud.status === "syncing"
+                      ? "var(--color-soft)"
+                      : "var(--color-ember)",
+              }}
+            />
+            {statusLabel}
+          </div>
+          <div className="flex gap-2">
+            <button
+              onClick={() => void cloud.syncNow()}
+              className="cursor-pointer rounded-full border border-edge2 bg-transparent px-4 py-2 text-xs font-bold text-soft transition-colors hover:text-fg"
+            >
+              Sync now
+            </button>
+            <button
+              onClick={() => void cloud.signOut()}
+              className="cursor-pointer rounded-full border border-edge2 bg-transparent px-4 py-2 text-xs font-bold text-mute transition-colors hover:text-fg"
+            >
+              Sign out
+            </button>
+          </div>
+        </div>
+      ) : (
+        <div>
+          <p className="mt-0 mb-3 text-[11px] leading-relaxed text-faint">
+            Sign in to keep your lines synced across your phone and laptop. Same login as Zingo —
+            your existing email and password work here.
+          </p>
+          <input
+            className={inputCls + " mb-2"}
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="Email"
+            type="email"
+            autoComplete="email"
+            aria-label="Email"
+          />
+          <input
+            className={inputCls + " mb-3"}
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && void run(cloud.signIn)}
+            placeholder="Password"
+            type="password"
+            autoComplete="current-password"
+            aria-label="Password"
+          />
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => void run(cloud.signIn)}
+              disabled={busy}
+              className="cursor-pointer rounded-full border-none bg-lime px-5 py-2 text-xs font-extrabold text-ink transition-opacity disabled:opacity-50"
+            >
+              {busy ? "…" : "Sign in"}
+            </button>
+            <button
+              onClick={() => void run(cloud.signUp)}
+              disabled={busy}
+              className="cursor-pointer rounded-full border border-edge2 bg-transparent px-4 py-2 text-xs font-bold text-mute transition-colors hover:text-fg disabled:opacity-50"
+            >
+              Create account
+            </button>
+          </div>
+          {msg && <div className="mt-2.5 text-[12px] leading-relaxed text-ember">{msg}</div>}
+        </div>
+      )}
+    </div>
+  );
+}
 
 export function Settings(props: Props) {
   const { config, lines } = props;
@@ -47,6 +176,8 @@ export function Settings(props: Props) {
 
   return (
     <div>
+      <AccountCard cloud={props.cloud} />
+
       <div className="mb-4 rounded-[14px] border border-edge bg-card p-4">
         <div className="eyebrow mb-3 text-mute">Make it yours</div>
         <label className="mb-3 block">

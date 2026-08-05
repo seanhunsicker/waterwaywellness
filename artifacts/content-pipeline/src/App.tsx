@@ -3,6 +3,7 @@ import { BarChart3, Settings2, X, Zap } from "lucide-react";
 import { Line, PillarId, SortMode, StatusFilter, View, pillarOf } from "@/types";
 import { useLines } from "@/hooks/useLines";
 import { useConfig } from "@/hooks/useConfig";
+import { useCloud } from "@/hooks/useCloud";
 import { ImportPayload, mergeConfigAdditions } from "@/lib/storage";
 import { cx } from "@/lib/cx";
 import { CaptureCard } from "@/components/CaptureCard";
@@ -45,6 +46,7 @@ export default function App() {
   } = useLines();
   const configApi = useConfig();
   const { config } = configApi;
+  const cloud = useCloud();
 
   const [view, setView] = useState<View>("pipeline");
   const [filter, setFilter] = useState<StatusFilter>("all");
@@ -175,6 +177,7 @@ export default function App() {
           <Settings
             config={config}
             lines={lines}
+            cloud={cloud}
             onBrand={configApi.setBrand}
             onUpdatePillar={configApi.updatePillar}
             onAddPillar={configApi.addPillar}

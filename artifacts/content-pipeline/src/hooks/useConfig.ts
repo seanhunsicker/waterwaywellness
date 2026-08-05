@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Config, DEFAULT_CONFIG, MAX_PILLARS, MAX_TAGS, PillarDef, SWATCHES, TagDef } from "@/types";
-import { CONFIG_KEY, loadConfig, newId, saveConfig } from "@/lib/storage";
+import { CONFIG_KEY, loadConfig, newId, onDataReplaced, saveConfig } from "@/lib/storage";
 
 export function useConfig() {
   const [config, setConfig] = useState<Config>(() => loadConfig());
@@ -17,7 +17,11 @@ export function useConfig() {
       if (e.key === CONFIG_KEY) setConfig(loadConfig());
     };
     window.addEventListener("storage", onStorage);
-    return () => window.removeEventListener("storage", onStorage);
+    const offReplaced = onDataReplaced(() => setConfig(loadConfig()));
+    return () => {
+      window.removeEventListener("storage", onStorage);
+      offReplaced();
+    };
   }, []);
 
   const setBrand = useCallback(

@@ -1,0 +1,5 @@
+{
+  "installCommand": "cd ../.. && npx pnpm@11.5.0 install --no-frozen-lockfile",
+  "buildCommand": "cd ../.. && npx pnpm@11.5.0 --filter @workspace/content-pipeline run build",
+  "outputDirectory": "dist"
+}

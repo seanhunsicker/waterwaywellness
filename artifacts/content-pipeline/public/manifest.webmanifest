@@ -1,0 +1,17 @@
+{
+  "name": "Content Pipeline",
+  "short_name": "Pipeline",
+  "description": "Capture one line a day. Film it. Post it.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#12140f",
+  "theme_color": "#12140f",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

@@ -489,6 +489,38 @@ export default function Home() {
         </div>
       </section>
 
+      {/* 5b. DESIGNER CREDIT */}
+      <section className="py-12 md:py-20 px-6 md:px-12 lg:px-24 bg-background relative z-10">
+        <motion.a
+          href="https://www.behance.net/kristopherkritikos"
+          target="_blank"
+          rel="noopener noreferrer"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+          variants={fadeInUp}
+          className="group block max-w-3xl mx-auto bg-card border border-white/5 hover:border-primary/40 rounded-3xl p-6 md:p-8 transition-all"
+        >
+          <div className="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6">
+            <div className="shrink-0 w-14 h-14 rounded-2xl bg-primary/15 flex items-center justify-center">
+              <span className="text-primary font-black text-xl tracking-tight">KK</span>
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-xs font-bold tracking-widest uppercase text-primary mb-1">The Designer</p>
+              <p className="font-bold text-foreground text-lg leading-tight">
+                Brand designed by Kris Kritikos
+              </p>
+              <p className="text-sm text-foreground/50 mt-1">
+                Fort Lauderdale graphic designer — the logos, the merch, the look. All him.
+              </p>
+            </div>
+            <span className="shrink-0 text-sm font-semibold text-foreground/60 group-hover:text-primary transition-colors">
+              See his work →
+            </span>
+          </div>
+        </motion.a>
+      </section>
+
       {/* 6. NEWSLETTER / JOIN */}
       <section className="py-16 md:py-32 px-6 bg-background">
         <div className="max-w-4xl mx-auto bg-card rounded-[2rem] md:rounded-[3rem] p-8 md:p-16 text-center border border-white/5 relative overflow-hidden">
